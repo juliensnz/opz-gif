@@ -11,59 +11,63 @@ const addImageToCanvas = (context: CanvasRenderingContext2D, imageData: ImageDat
   const top = (imageData.height - croppedHeight) / 2;
 
   context.putImageData(imageData, 0, -top, left, top, croppedWidth, croppedHeight);
-}
+};
 
 const drawImage = (canvas: HTMLCanvasElement, imageData: ImageData) => {
   const context = canvas.getContext('2d');
   if (null === context) return;
 
   addImageToCanvas(context, imageData);
-  context.drawImage(canvas, 0, 0);
-}
-
+  context.drawImage(canvas, 0, 0, FRAME_WIDTH, FRAME_HEIGHT);
+};
 
 const getTrimedFrames = (gif: GIF) => {
   const frameCount = Math.floor(ANIMATION_LENGTH / (gif[0].delay * 10));
 
-  return [...(new Array(30))].map((_value: any, index: number) => getFrame(frameCount >= gif.length ? gif.length : frameCount, index));
-}
+  return [...new Array(30)].map((_value: any, index: number) =>
+    getFrame(frameCount >= gif.length ? gif.length : frameCount, index)
+  );
+};
 const getSampledFrames = (gif: GIF) => {
-  return [...(new Array(30))].map((_value: any, index: number) => getFrame(gif.length, index));
-}
+  return [...new Array(30)].map((_value: any, index: number) => getFrame(gif.length, index));
+};
 
-const animateTrimed = (canvas: HTMLCanvasElement, gif: GIF) => {
+const animateTrimed = (canvas: HTMLCanvasElement, gif: GIF): number => {
   let cpt = 0;
   const frames = getTrimedFrames(gif);
 
-  setInterval(() => {
+  return setInterval(() => {
     const imageData = gif[frames[cpt % 30]].data;
     drawImage(canvas, imageData);
     cpt++;
   }, ANIMATION_LENGTH / 30);
-}
+};
 
-const animateSampled = (canvas: HTMLCanvasElement, gif: GIF) => {
+const animateSampled = (canvas: HTMLCanvasElement, gif: GIF): number => {
   let cpt = 0;
   const frames = getSampledFrames(gif);
-  setInterval(() => {
+  return setInterval(() => {
     const imageData = gif[frames[cpt % 30]].data;
     drawImage(canvas, imageData);
     cpt++;
   }, ANIMATION_LENGTH / 30);
-}
-
+};
 
 const scaleImage = (canvas: HTMLCanvasElement, gif: GIF) => {
   const scale = FRAME_WIDTH / gif[0].data.width;
 
   (canvas.getContext('2d') as any).scale(scale, scale);
-}
+};
+
+const clearCanvas = (canvas: HTMLCanvasElement) => {
+  (canvas.getContext('2d') as any).clearRect(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
+};
 
 const getFrame = (totalFrames: number, frameNumber: number) => {
   const frameStep = totalFrames / 30;
 
   return Math.floor(frameNumber * frameStep);
-}
+};
 
 const getImages = (gif: GIF, frames: number[]): ImageData[] => {
   return frames.map((key: number) => {
@@ -80,11 +84,11 @@ const getImages = (gif: GIF, frames: number[]): ImageData[] => {
     context.drawImage(canvas, 0, 0);
 
     return context.getImageData(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
-  })
-}
+  });
+};
 
-const getOffsetX = (index: number): number => 5 + ((FRAME_WIDTH + 10) * (index % 4));
-const getOffsetY = (index: number): number => 22 + ((FRAME_HEIGHT + 44) * (Math.floor(index/4)));
+const getOffsetX = (index: number): number => 5 + (FRAME_WIDTH + 10) * (index % 4);
+const getOffsetY = (index: number): number => 22 + (FRAME_HEIGHT + 44) * Math.floor(index / 4);
 
 const generateSprite = async (images: ImageData[]): Promise<string> => {
   const canvas = document.createElement('canvas');
@@ -100,6 +104,17 @@ const generateSprite = async (images: ImageData[]): Promise<string> => {
   context.drawImage(canvas, 0, 0);
 
   return canvas.toDataURL('image/png');
-}
+};
 
-export {addImageToCanvas, scaleImage, animateTrimed, animateSampled, generateSprite, getImages, getTrimedFrames, FRAME_WIDTH, FRAME_HEIGHT}
+export {
+  addImageToCanvas,
+  scaleImage,
+  animateTrimed,
+  animateSampled,
+  generateSprite,
+  getImages,
+  getTrimedFrames,
+  clearCanvas,
+  FRAME_WIDTH,
+  FRAME_HEIGHT,
+};
