@@ -7,7 +7,7 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   position: absolute;
-  background-color: rgb(233, 177, 61);
+  background-color: ${(props) => props.theme.color.yellow};
   display: flex;
   flex-direction: column;
   align-items: center;

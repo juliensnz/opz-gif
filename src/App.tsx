@@ -1,108 +1,112 @@
 import React, {useState, useCallback, useEffect} from 'react';
-import {Loader} from './Component/Loader';
 import styled from 'styled-components';
+import {useBooleanState} from './hooks/boolean';
+import {Adder} from './Component/Adder/Adder';
+import {Loop} from './model/loop';
+import {generateSprite, getImages, getTrimedFrames} from './tools/canvas';
 import JSZip from 'jszip';
 import {saveAs} from 'file-saver';
-import {requestStorage, saveJSONFile, getJSONFile} from './Component/storage';
+import {generateZip} from './tools/zip';
 
-const Download = styled.span``;
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  height: 100vh;
+  font-family: 'Muli', sans-serif;
+  box-sizing: border-box;
 `;
 
 const Grid = styled.div`
-  display: grid;
-  grid-gap: 10px;
-  grid-template-columns: repeat(auto-fill, minmax(338px, 1fr));
-  width: 95vw;
+  flex: 1;
+  background: rgb(208, 208, 208);
 `;
-
-const Item = styled.div`
+const Footer = styled.div`
+  height: 100px;
   display: flex;
-  justify-content: center;
+  color: white;
+  background: rgb(19, 19, 19);
 `;
 
-const areSpriteEmpty = (sprites: string[]) => {
-  return !sprites.some((sprite) => 0 !== sprite.length);
-};
+const AddButton = styled.div`
+  padding: 0 30px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  background-color: ${(props) => props.theme.color.yellow};
 
-const useSpriteState = (): [string[], (index: number, sprite: string) => void] => {
-  const [sprites, setSprites] = useState([...new Array(16)].map(() => ''));
+  &:hover {
+    cursor: pointer;
+  }
+`;
+const Spacer = styled.div`
+  flex: 1;
+`;
 
-  const setSprite = useCallback(
-    (index: number, sprite: string) => {
-      const clonedSprites = [...sprites];
-      clonedSprites[index] = sprite;
+const DownloadButton = styled.div`
+  padding: 0 30px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  background-color: ${(props) => props.theme.color.blue};
 
-      setSprites(clonedSprites);
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const useLoopState = (): [Loop[], (loop: Loop) => void] => {
+  const [loops, setLoops] = useState<Loop[]>([]);
+
+  const setLoop = useCallback(
+    (newLoop: Loop) => {
+      const updatedLoops = [...loops].filter((loop) => loop.sprite !== newLoop.sprite);
+
+      setLoops([...updatedLoops, newLoop]);
     },
-    [sprites]
+    [loops, setLoops]
   );
 
-  useEffect(() => {
-    requestStorage().then(async (fs: any) => {
-      const storedSprites = await getJSONFile(fs, 'images.json');
-      setSprites(storedSprites);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!areSpriteEmpty(sprites)) {
-      requestStorage().then(async (fs: any) => {
-        await saveJSONFile(fs, 'images.json', sprites);
-      });
-    }
-  }, [sprites]);
-
-  return [sprites, setSprite];
+  return [loops, setLoop];
 };
 
-function App() {
-  const [sprites, setSprites] = useSpriteState();
-
-  const onSpriteUpdate = useCallback(
-    (index: number) => (updatedSprite: string) => {
-      setSprites(index, updatedSprite);
-    },
-    [setSprites]
-  );
+const App = () => {
+  const [isAddModalOpen, openAddModal, closeAddModal] = useBooleanState(true);
+  const [loops, setLoop] = useLoopState();
+  console.log(loops);
 
   return (
     <Container>
-      <Download
-        onClick={() => {
-          const zip = new JSZip();
-          const folder = zip.folder('GIFs');
-          sprites.forEach((sprite, index) => {
-            if ('' === sprite) return;
-
-            folder.file(
-              `GIF-Looper-Template-Spritesheet${index + 1 < 10 ? '0' : ''}${index + 1}.png`,
-              sprite.replace('data:image/png;base64,', ''),
-              {
-                base64: true,
-              }
-            );
-          });
-
-          zip.generateAsync({type: 'blob'}).then(function (content) {
-            saveAs(content, 'GIFs.zip');
-          });
-        }}
-      >
-        Download
-      </Download>
-      <Grid>
-        {sprites.map((_value, index: number) => (
-          <Item key={index}>
-            <Loader onSpriteUpdate={onSpriteUpdate(index)} index={index + 1} />
-          </Item>
-        ))}
-      </Grid>
+      <Grid>Content</Grid>
+      <Footer>
+        <AddButton
+          onClick={() => {
+            openAddModal();
+          }}
+        >
+          <span>Add</span>
+        </AddButton>
+        <Spacer />
+        <DownloadButton
+          onClick={async () => {
+            const zip = await generateZip(loops);
+            saveAs(zip, 'GIFs.zip');
+          }}
+        >
+          <span>Download</span>
+        </DownloadButton>
+      </Footer>
+      {isAddModalOpen && (
+        <Adder
+          onLoopAdd={(loop: Loop) => {
+            closeAddModal();
+            setLoop(loop);
+          }}
+        />
+      )}
     </Container>
   );
-}
+};
 
 export default App;

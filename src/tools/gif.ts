@@ -1,6 +1,14 @@
 import SuperGif from 'libgif';
 
+export enum Sample {
+  Trim,
+  Sample,
+}
+
 export type GIF = {data: ImageData; delay: number}[];
+export type Configuration = {
+  sample: Sample;
+};
 
 const getBase64 = async (file: File): Promise<string> => {
   return new Promise((resolve) => {

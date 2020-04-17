@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useRef, useState, useEffect} from 'react';
 import styled from 'styled-components';
-import {getGif, getBase64, GIF, getImage, getDataUrl} from './gif';
+import {getGif, getBase64, GIF, getImage, getDataUrl} from '../tools/gif';
 import {
   scaleImage,
   animateTrimed,
@@ -9,7 +9,7 @@ import {
   getTrimedFrames,
   FRAME_WIDTH,
   FRAME_HEIGHT,
-} from './canvas';
+} from '../tools/canvas';
 import {Url} from './Url';
 
 const Canvas = styled.canvas`
