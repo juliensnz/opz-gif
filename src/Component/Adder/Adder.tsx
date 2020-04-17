@@ -1,12 +1,13 @@
-import React, {useState, MouseEvent} from 'react';
+import React, {useState, MouseEvent, useEffect} from 'react';
 import {GIF, Configuration} from '../../tools/gif';
 import styled from 'styled-components';
 import {SourceSelector} from './Adder/SourceSelector';
 import {LoopConfigurator} from './Adder/LoopConfigurator';
 import {SpriteSelector} from './Adder/SpriteSelector';
 import {Loop} from '../../model/loop';
+import {useBooleanState} from '../../hooks/boolean';
 
-const Container = styled.div`
+const Container = styled.div<{isVisible: boolean}>`
   position: fixed;
   top: 0;
   left: 0;
@@ -16,6 +17,9 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.3);
+  opacity: ${(props) => (props.isVisible ? 1 : 0)};
+
+  transition: opacity 0.5s ease-in-out;
 `;
 
 const Modal = styled.div`
@@ -24,6 +28,7 @@ const Modal = styled.div`
   background: ${(props) => props.theme.color.white};
   overflow: hidden;
   border-radius: 5px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 `;
 
 const Scroller = styled.div<{level: number}>`
@@ -56,6 +61,10 @@ const Dismiss = styled.div`
   text-align: center;
   font-size: 30px;
   font-weight: 100;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const Title = styled.div`
@@ -78,15 +87,20 @@ const getLevel = (gif: GIF, configuration: Configuration | null): number => {
   return 0;
 };
 
-const Adder = ({onLoopAdd}: {onLoopAdd: (loop: Loop) => void}) => {
+const Adder = ({onLoopAdd, dismissModal}: {onLoopAdd: (loop: Loop) => void; dismissModal: () => void}) => {
   const [gif, setGif] = useState<GIF>([]);
   const [configuration, setConfiguration] = useState<Configuration | null>(null);
+  const [isVisible, show] = useBooleanState(false);
+
+  useEffect(() => {
+    setImmediate(() => show());
+  }, []);
 
   return (
-    <Container>
+    <Container isVisible={isVisible}>
       <Modal>
         <Header>
-          <Dismiss>X</Dismiss>
+          <Dismiss onClick={() => dismissModal()}>X</Dismiss>
           <Title>Add a loop</Title>
         </Header>
         <Scroller level={getLevel(gif, configuration)}>

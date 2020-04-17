@@ -7,6 +7,7 @@ import {generateSprite, getImages, getTrimedFrames} from './tools/canvas';
 import JSZip from 'jszip';
 import {saveAs} from 'file-saver';
 import {generateZip} from './tools/zip';
+import {Loops} from './Component/Loops';
 
 const Container = styled.div`
   display: flex;
@@ -16,12 +17,20 @@ const Container = styled.div`
   box-sizing: border-box;
 `;
 
-const Grid = styled.div`
-  flex: 1;
-  background: rgb(208, 208, 208);
+const Header = styled.div`
+  height: 60px;
+  display: flex;
+  color: white;
+  background: rgb(19, 19, 19);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: 100;
+  width: 100%;
 `;
 const Footer = styled.div`
-  height: 100px;
+  height: 60px;
   display: flex;
   color: white;
   background: rgb(19, 19, 19);
@@ -39,6 +48,7 @@ const AddButton = styled.div`
     cursor: pointer;
   }
 `;
+
 const Spacer = styled.div`
   flex: 1;
 `;
@@ -72,13 +82,16 @@ const useLoopState = (): [Loop[], (loop: Loop) => void] => {
 };
 
 const App = () => {
-  const [isAddModalOpen, openAddModal, closeAddModal] = useBooleanState(true);
+  const [isAddModalOpen, openAddModal, closeAddModal] = useBooleanState(false);
   const [loops, setLoop] = useLoopState();
   console.log(loops);
 
   return (
     <Container>
-      <Grid>Content</Grid>
+      <Header>
+        <span>Gif looper generator</span>
+      </Header>
+      <Loops loops={loops} />
       <Footer>
         <AddButton
           onClick={() => {
@@ -99,6 +112,7 @@ const App = () => {
       </Footer>
       {isAddModalOpen && (
         <Adder
+          dismissModal={() => closeAddModal()}
           onLoopAdd={(loop: Loop) => {
             closeAddModal();
             setLoop(loop);

@@ -1,8 +1,9 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, useState, useRef, useEffect} from 'react';
 import styled from 'styled-components';
 import {getDataUrl, getGif, GIF} from '../../../../tools/gif';
 import {Back} from '../../../Style/Back';
 import {Source} from '../SourceSelector';
+import {useAutoFocus} from '../../../../hooks/focus';
 
 const Container = styled.div<{selected: boolean; previous: boolean}>`
   background-color: ${(props) => props.theme.color.yellow};
@@ -73,12 +74,20 @@ const UrlSource = ({
 }) => {
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
+  const urlRef = useRef<HTMLInputElement>(null);
+  const setFocus = useAutoFocus(urlRef);
+  useEffect(() => {
+    if (Source.Url === selected) {
+      setFocus();
+    }
+  }, [selected]);
 
   return (
     <Container selected={Source.Url === selected} previous={previous}>
       <Button onClick={() => Source.Url !== selected && onSelected()}>Url</Button>
       <Form visible={Source.Url === selected}>
         <Input
+          ref={urlRef}
           placeholder="Your GIF url"
           type="text"
           onChange={async (event: ChangeEvent<HTMLInputElement>) => {

@@ -21,7 +21,7 @@ const Container = styled.div<{source: Source | null; previous: boolean}>`
 `;
 
 const SourceSelector = ({onGifSelected, previous}: {previous: boolean; onGifSelected: (gif: GIF) => void}) => {
-  const [source, setSource] = useState<null | Source>(Source.File);
+  const [source, setSource] = useState<null | Source>(null);
 
   return (
     <Container source={source} previous={previous}>
