@@ -6,6 +6,7 @@ import {LoopConfigurator} from './Adder/LoopConfigurator';
 import {SpriteSelector} from './Adder/SpriteSelector';
 import {Loop} from '../../model/loop';
 import {useBooleanState} from '../../hooks/boolean';
+import {sendEvent, UserEvent} from '../../tools/analytics';
 
 const Container = styled.div<{isVisible: boolean}>`
   position: fixed;
@@ -113,13 +114,27 @@ const Adder = ({
         sprite,
       });
     }
-  }, [gif, configuration, sprite]);
+  }, [gif, configuration, sprite, onLoopAdd]);
 
   return (
     <Container isVisible={isVisible}>
       <Modal>
         <Header>
-          <Dismiss onClick={() => dismissModal()}>X</Dismiss>
+          <Dismiss
+            onClick={() => {
+              if (null !== configuration) {
+                sendEvent(UserEvent.CancelAdd, {from: 'sprite'});
+              } else if (0 !== gif.length) {
+                sendEvent(UserEvent.CancelAdd, {from: 'configure'});
+              } else {
+                sendEvent(UserEvent.CancelAdd, {from: 'start'});
+              }
+
+              dismissModal();
+            }}
+          >
+            X
+          </Dismiss>
           <Title>Add a loop</Title>
         </Header>
         <Scroller level={getLevel(gif, configuration)}>

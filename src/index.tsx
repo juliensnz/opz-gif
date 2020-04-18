@@ -4,6 +4,8 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import {ThemeProvider} from 'styled-components';
+import {sendEvent, UserEvent} from './tools/analytics';
+import {ErrorBoundary} from './Component/Error';
 
 const theme = {
   addModal: {
@@ -22,11 +24,15 @@ const theme = {
   },
 };
 
+sendEvent(UserEvent.AppLaunch);
+
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <App />
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>
+    </ErrorBoundary>
   </React.StrictMode>,
   document.getElementById('root')
 );

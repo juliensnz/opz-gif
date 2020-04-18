@@ -6,6 +6,7 @@ import {Loop} from './model/loop';
 import {saveAs} from 'file-saver';
 import {generateZip} from './tools/zip';
 import {Loops} from './Component/Loops';
+import {sendEvent, UserEvent, sendError} from './tools/analytics';
 
 const Container = styled.div`
   display: flex;
@@ -92,6 +93,7 @@ const App = () => {
       <Loops
         loops={loops}
         onOpenAddLoop={(sprite: number) => {
+          sendEvent(UserEvent.StartAdding, {loop_number: sprite, from: 'loop'});
           setSprite(sprite);
           openAddModal();
         }}
@@ -99,6 +101,7 @@ const App = () => {
       <Footer>
         <AddButton
           onClick={() => {
+            sendEvent(UserEvent.StartAdding, {from: 'button'});
             openAddModal();
           }}
         >
@@ -108,8 +111,13 @@ const App = () => {
         {0 !== loops.length && (
           <DownloadButton
             onClick={async () => {
-              const zip = await generateZip(loops);
-              saveAs(zip, 'GIFs.zip');
+              sendEvent(UserEvent.Download, {loop_count: loops.length});
+              try {
+                const zip = await generateZip(loops);
+                saveAs(zip, 'GIFs.zip');
+              } catch (error) {
+                sendError('cannot_generate_zip', error);
+              }
             }}
           >
             <span>Download</span>
@@ -120,6 +128,18 @@ const App = () => {
         <Adder
           dismissModal={() => closeAddModal()}
           onLoopAdd={(loop: Loop) => {
+            if (currentSprite === null) {
+              sendEvent(UserEvent.LoopAdded, {
+                loop_count: loops.length,
+                from: 'button',
+              });
+            } else {
+              sendEvent(UserEvent.LoopAdded, {
+                loop_count: loops.length,
+                from: 'sprite',
+                loop: currentSprite,
+              });
+            }
             closeAddModal();
             setLoop(loop);
             setSprite(null);

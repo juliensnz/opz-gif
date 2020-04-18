@@ -4,6 +4,7 @@ import {getDataUrl, getGif, GIF} from '../../../../tools/gif';
 import {Back} from '../../../Style/Back';
 import {Source} from '../SourceSelector';
 import {useAutoFocus} from '../../../../hooks/focus';
+import {sendEvent, UserEvent, sendError} from '../../../../tools/analytics';
 
 const Container = styled.div<{selected: boolean; previous: boolean}>`
   background-color: ${(props) => props.theme.color.yellow};
@@ -91,9 +92,11 @@ const UrlSource = ({
     try {
       const gifData = await getDataUrl(url);
       const newGif = await getGif(gifData);
+      sendEvent(UserEvent.GifSelected, {type: 'url'});
       onGifSelected(newGif);
       setLoading(false);
     } catch (error) {
+      sendError('cannot_generate_gif_from_url', error);
       console.error(error);
     }
   }, [url, onGifSelected, setLoading, loading]);

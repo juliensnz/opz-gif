@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import {GIF, getBase64, getGif} from '../../../../tools/gif';
 import {Back} from '../../../Style/Back';
 import {Source} from '../SourceSelector';
+import {sendEvent, UserEvent, sendError} from '../../../../tools/analytics';
 
 const WINDOW_SIZE = 600;
 const Container = styled.div<{selected: boolean; previous: boolean}>`
@@ -102,10 +103,16 @@ const FileSource = ({
             }
             setLoading(true);
 
-            const gifData = await getBase64(event.target.files[0]);
-            const newGif = await getGif(gifData);
-            onGifSelected(newGif);
-            setLoading(false);
+            try {
+              const gifData = await getBase64(event.target.files[0]);
+              const newGif = await getGif(gifData);
+              sendEvent(UserEvent.GifSelected, {type: 'file'});
+              onGifSelected(newGif);
+              setLoading(false);
+            } catch (error) {
+              sendError('cannot_generate_gif_from_file', error);
+              setLoading(false);
+            }
           }}
         />
       </DropZone>
