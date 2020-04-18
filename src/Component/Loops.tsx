@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {Loop} from '../model/loop';
 import styled from 'styled-components';
 import {Player} from './Player';

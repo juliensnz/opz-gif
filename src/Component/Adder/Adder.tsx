@@ -1,4 +1,4 @@
-import React, {useState, MouseEvent, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {GIF, Configuration} from '../../tools/gif';
 import styled from 'styled-components';
 import {SourceSelector} from './Adder/SourceSelector';
@@ -94,7 +94,7 @@ const Adder = ({onLoopAdd, dismissModal}: {onLoopAdd: (loop: Loop) => void; dism
 
   useEffect(() => {
     setImmediate(() => show());
-  }, []);
+  }, [show]);
 
   return (
     <Container isVisible={isVisible}>

@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useState, useRef, useEffect} from 'react';
+import React, {ChangeEvent, useState, useRef, useEffect, KeyboardEvent, useCallback} from 'react';
 import styled from 'styled-components';
 import {getDataUrl, getGif, GIF} from '../../../../tools/gif';
 import {Back} from '../../../Style/Back';
@@ -80,7 +80,24 @@ const UrlSource = ({
     if (Source.Url === selected) {
       setFocus();
     }
-  }, [selected]);
+
+    if (null === selected) {
+      setTimeout(() => setUrl(''), 500);
+    }
+  }, [selected, previous, setFocus]);
+  const submit = useCallback(async () => {
+    setLoading(true);
+
+    try {
+      const gifData = await getDataUrl(url);
+      const newGif = await getGif(gifData);
+      onGifSelected(newGif);
+      setLoading(false);
+      console.log(loading);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [url, onGifSelected, setLoading, loading]);
 
   return (
     <Container selected={Source.Url === selected} previous={previous}>
@@ -93,24 +110,14 @@ const UrlSource = ({
           onChange={async (event: ChangeEvent<HTMLInputElement>) => {
             setUrl(event.currentTarget.value);
           }}
-          value={url}
-        />
-        <Submit
-          onClick={async () => {
-            setLoading(true);
-
-            try {
-              const gifData = await getDataUrl(url);
-              const newGif = await getGif(gifData);
-              onGifSelected(newGif);
-              setLoading(false);
-            } catch (error) {
-              console.error(error);
+          onKeyPress={(event: KeyboardEvent<HTMLInputElement>) => {
+            if ('Enter' === event.key) {
+              submit();
             }
           }}
-        >
-          Confirm
-        </Submit>
+          value={url}
+        />
+        <Submit onClick={submit}>Confirm</Submit>
       </Form>
       {previous && (
         <Back vertical={true} onClick={() => onGifSelected([])}>

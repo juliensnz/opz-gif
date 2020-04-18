@@ -7,3 +7,5 @@ Next:
 - add from grid
 - escape to dismiss
 - enter to confirm url
+- remove all
+- storage

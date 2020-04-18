@@ -1,10 +1,8 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState, useCallback} from 'react';
 import styled from 'styled-components';
 import {useBooleanState} from './hooks/boolean';
 import {Adder} from './Component/Adder/Adder';
 import {Loop} from './model/loop';
-import {generateSprite, getImages, getTrimedFrames} from './tools/canvas';
-import JSZip from 'jszip';
 import {saveAs} from 'file-saver';
 import {generateZip} from './tools/zip';
 import {Loops} from './Component/Loops';

@@ -5,8 +5,6 @@ import {Back} from '../../../Style/Back';
 import {Source} from '../SourceSelector';
 
 const WINDOW_SIZE = 600;
-const SOURCE_COUNT = 2;
-const SPACING = 60;
 const Container = styled.div<{selected: boolean; previous: boolean}>`
   background-color: ${(props) => props.theme.color.blue};
   width: ${WINDOW_SIZE}px;
@@ -85,6 +83,7 @@ const FileSource = ({
   onGifSelected: (gif: GIF) => void;
 }) => {
   const [loading, setLoading] = useState(false);
+  console.log(loading);
 
   return (
     <Container selected={Source.File === selected} previous={previous}>
