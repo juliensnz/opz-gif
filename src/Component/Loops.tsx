@@ -70,7 +70,7 @@ const Loops = ({loops, onOpenAddLoop}: {loops: Loop[]; onOpenAddLoop: (sprite: n
         {nonEmptyLoops.map((loop: Loop | undefined, index: number) => (
           <Item key={index}>
             {undefined === loop ? index + 1 : <Player gif={loop.gif} width={300} />}
-            <Actions onClick={() => (undefined === loop ? onOpenAddLoop(index) : '')}>
+            <Actions onClick={() => (undefined === loop ? onOpenAddLoop(index) : onOpenAddLoop(index))}>
               {undefined === loop ? <span>Add</span> : <span>Edit</span>}
             </Actions>
           </Item>
