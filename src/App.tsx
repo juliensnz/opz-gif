@@ -105,14 +105,16 @@ const App = () => {
           <span>Add</span>
         </AddButton>
         <Spacer />
-        <DownloadButton
-          onClick={async () => {
-            const zip = await generateZip(loops);
-            saveAs(zip, 'GIFs.zip');
-          }}
-        >
-          <span>Download</span>
-        </DownloadButton>
+        {0 !== loops.length && (
+          <DownloadButton
+            onClick={async () => {
+              const zip = await generateZip(loops);
+              saveAs(zip, 'GIFs.zip');
+            }}
+          >
+            <span>Download</span>
+          </DownloadButton>
+        )}
       </Footer>
       {isAddModalOpen && (
         <Adder
