@@ -37,7 +37,7 @@ const SpriteSelector = ({onSpriteConfirmation}: {onSpriteConfirmation: (sprite: 
   return (
     <Container>
       <Grid>
-        {[...new Array(16)].map((_content, index: number) => (
+        {[...new Array(14)].map((_content, index: number) => (
           <Sprite
             key={index}
             onClick={() => {

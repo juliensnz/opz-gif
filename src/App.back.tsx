@@ -29,7 +29,7 @@ const areSpriteEmpty = (sprites: string[]) => {
 };
 
 const useSpriteState = (): [string[], (index: number, sprite: string) => void] => {
-  const [sprites, setSprites] = useState([...new Array(16)].map(() => ''));
+  const [sprites, setSprites] = useState([...new Array(14)].map(() => ''));
 
   const setSprite = useCallback(
     (index: number, sprite: string) => {

@@ -69,10 +69,12 @@ const Loops = ({loops, onOpenAddLoop}: {loops: Loop[]; onOpenAddLoop: (sprite: n
       <Grid>
         {nonEmptyLoops.map((loop: Loop | undefined, index: number) => (
           <Item key={index}>
-            {undefined === loop ? index + 1 : <Player gif={loop.gif} width={300} />}
-            <Actions onClick={() => (undefined === loop ? onOpenAddLoop(index) : onOpenAddLoop(index))}>
-              {undefined === loop ? <span>Add</span> : <span>Edit</span>}
-            </Actions>
+            {undefined === loop ? index < 14 ? index + 1 : '' : <Player gif={loop.gif} width={300} />}
+            {index < 14 && (
+              <Actions onClick={() => (undefined === loop ? onOpenAddLoop(index) : onOpenAddLoop(index))}>
+                {undefined === loop ? <span>Add</span> : <span>Edit</span>}
+              </Actions>
+            )}
           </Item>
         ))}
       </Grid>
