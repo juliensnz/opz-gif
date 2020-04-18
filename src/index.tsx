@@ -13,7 +13,7 @@ const theme = {
   },
   color: {
     yellow: 'rgb(233, 177, 61)',
-    red: 'rgb(233, 177, 61)',
+    red: 'rgb(193, 51, 56)',
     blue: 'rgb(39, 94, 132)',
     white: 'rgb(208, 208, 208)',
     grey: 'rgb(128, 128, 128)',

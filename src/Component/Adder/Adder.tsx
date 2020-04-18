@@ -87,14 +87,33 @@ const getLevel = (gif: GIF, configuration: Configuration | null): number => {
   return 0;
 };
 
-const Adder = ({onLoopAdd, dismissModal}: {onLoopAdd: (loop: Loop) => void; dismissModal: () => void}) => {
+const Adder = ({
+  initialSprite = null,
+  onLoopAdd,
+  dismissModal,
+}: {
+  initialSprite?: number | null;
+  onLoopAdd: (loop: Loop) => void;
+  dismissModal: () => void;
+}) => {
   const [gif, setGif] = useState<GIF>([]);
   const [configuration, setConfiguration] = useState<Configuration | null>(null);
+  const [sprite, setSprite] = useState<number | null>(initialSprite);
   const [isVisible, show] = useBooleanState(false);
 
   useEffect(() => {
     setImmediate(() => show());
   }, [show]);
+
+  useEffect(() => {
+    if (0 !== gif.length && null !== configuration && null !== sprite) {
+      onLoopAdd({
+        gif,
+        configuration,
+        sprite,
+      });
+    }
+  }, [gif, configuration, sprite]);
 
   return (
     <Container isVisible={isVisible}>
@@ -119,13 +138,7 @@ const Adder = ({onLoopAdd, dismissModal}: {onLoopAdd: (loop: Loop) => void; dism
           />
           <SpriteSelector
             onSpriteConfirmation={(sprite: number) => {
-              if (null !== configuration && gif.length !== 0) {
-                onLoopAdd({
-                  gif,
-                  configuration,
-                  sprite,
-                });
-              }
+              setSprite(sprite);
             }}
           />
         </Scroller>

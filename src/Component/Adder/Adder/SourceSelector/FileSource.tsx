@@ -83,7 +83,6 @@ const FileSource = ({
   onGifSelected: (gif: GIF) => void;
 }) => {
   const [loading, setLoading] = useState(false);
-  console.log(loading);
 
   return (
     <Container selected={Source.File === selected} previous={previous}>

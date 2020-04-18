@@ -93,7 +93,6 @@ const UrlSource = ({
       const newGif = await getGif(gifData);
       onGifSelected(newGif);
       setLoading(false);
-      console.log(loading);
     } catch (error) {
       console.error(error);
     }

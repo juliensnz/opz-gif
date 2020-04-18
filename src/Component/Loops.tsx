@@ -17,6 +17,7 @@ const Grid = styled.div`
 `;
 
 const Item = styled.div`
+  position: relative;
   display: flex;
   justify-content: center;
   height: 138px;
@@ -36,7 +37,29 @@ const Item = styled.div`
   );
 `;
 
-const Loops = ({loops}: {loops: Loop[]}) => {
+const Actions = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: ${(props) => props.theme.color.red};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 100;
+  font-size: 25px;
+  color: ${(props) => props.theme.color.black};
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+
+  &:hover {
+    cursor: pointer;
+    opacity: 1;
+  }
+`;
+
+const Loops = ({loops, onOpenAddLoop}: {loops: Loop[]; onOpenAddLoop: (sprite: number) => void}) => {
   const nonEmptyLoops = [...new Array(16)].map((_content, index: number) => {
     return loops.find((loop) => loop.sprite === index);
   });
@@ -45,7 +68,12 @@ const Loops = ({loops}: {loops: Loop[]}) => {
     <Container>
       <Grid>
         {nonEmptyLoops.map((loop: Loop | undefined, index: number) => (
-          <Item key={index}>{undefined === loop ? index + 1 : <Player gif={loop.gif} width={300} />}</Item>
+          <Item key={index}>
+            {undefined === loop ? index + 1 : <Player gif={loop.gif} width={300} />}
+            <Actions onClick={() => (undefined === loop ? onOpenAddLoop(index) : '')}>
+              {undefined === loop ? <span>Add</span> : <span>Edit</span>}
+            </Actions>
+          </Item>
         ))}
       </Grid>
     </Container>

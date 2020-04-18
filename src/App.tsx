@@ -82,14 +82,20 @@ const useLoopState = (): [Loop[], (loop: Loop) => void] => {
 const App = () => {
   const [isAddModalOpen, openAddModal, closeAddModal] = useBooleanState(false);
   const [loops, setLoop] = useLoopState();
-  console.log(loops);
+  const [currentSprite, setSprite] = useState<number | null>(null);
 
   return (
     <Container>
       <Header>
         <span>Gif looper generator</span>
       </Header>
-      <Loops loops={loops} />
+      <Loops
+        loops={loops}
+        onOpenAddLoop={(sprite: number) => {
+          setSprite(sprite);
+          openAddModal();
+        }}
+      />
       <Footer>
         <AddButton
           onClick={() => {
@@ -114,7 +120,9 @@ const App = () => {
           onLoopAdd={(loop: Loop) => {
             closeAddModal();
             setLoop(loop);
+            setSprite(null);
           }}
+          initialSprite={currentSprite}
         />
       )}
     </Container>
