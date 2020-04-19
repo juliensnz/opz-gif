@@ -1,10 +1,11 @@
-import React, {ChangeEvent, useState, useRef, useEffect, KeyboardEvent, useCallback} from 'react';
+import React, {ChangeEvent, useState, useRef, useEffect, KeyboardEvent, useCallback, useContext} from 'react';
 import styled from 'styled-components';
 import {getDataUrl, getGif, GIF} from '../../../../tools/gif';
 import {Back} from '../../../Style/Back';
 import {Source} from '../SourceSelector';
 import {useAutoFocus} from '../../../../hooks/focus';
 import {sendEvent, UserEvent, sendError} from '../../../../tools/analytics';
+import {LoadingContext} from '../../../../context/loading';
 
 const Container = styled.div<{selected: boolean; previous: boolean}>`
   background-color: ${(props) => props.theme.color.yellow};
@@ -74,7 +75,8 @@ const UrlSource = ({
   onGifSelected: (gif: GIF) => void;
 }) => {
   const [url, setUrl] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useContext(LoadingContext);
+
   const urlRef = useRef<HTMLInputElement>(null);
   const setFocus = useAutoFocus(urlRef);
   useEffect(() => {
@@ -99,7 +101,7 @@ const UrlSource = ({
       sendError('cannot_generate_gif_from_url', error);
       console.error(error);
     }
-  }, [url, onGifSelected, setLoading, loading]);
+  }, [url, onGifSelected, setLoading]);
 
   return (
     <Container selected={Source.Url === selected} previous={previous}>

@@ -1,9 +1,10 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, useContext} from 'react';
 import styled from 'styled-components';
 import {GIF, getBase64, getGif} from '../../../../tools/gif';
 import {Back} from '../../../Style/Back';
 import {Source} from '../SourceSelector';
 import {sendEvent, UserEvent, sendError} from '../../../../tools/analytics';
+import {LoadingContext} from '../../../../context/loading';
 
 const WINDOW_SIZE = 600;
 const Container = styled.div<{selected: boolean; previous: boolean}>`
@@ -83,7 +84,7 @@ const FileSource = ({
   onSelected: () => void;
   onGifSelected: (gif: GIF) => void;
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useContext(LoadingContext);
 
   return (
     <Container selected={Source.File === selected} previous={previous}>

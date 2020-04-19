@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback, useContext} from 'react';
 import {GIF, Configuration} from '../../tools/gif';
 import styled from 'styled-components';
 import {SourceSelector} from './Adder/SourceSelector';
@@ -10,6 +10,8 @@ import {sendEvent, UserEvent} from '../../tools/analytics';
 import {Container, Modal, Header, Dismiss, Title, Mask} from '../Modal';
 import {useShortcut} from '../../hooks/shortcut';
 import {Key} from '../../tools/key';
+import {Loading} from '../Loading';
+import {LoadingContext} from '../../context/loading';
 
 const Scroller = styled.div<{level: number}>`
   width: ${(props) => props.theme.addModal.windowSize * 3}px;
@@ -46,6 +48,7 @@ const Adder = ({
   const [configuration, setConfiguration] = useState<Configuration | null>(null);
   const [sprite, setSprite] = useState<number | null>(initialSprite);
   const [isVisible, show] = useBooleanState(false);
+  const [loading] = useContext(LoadingContext);
 
   useEffect(() => {
     setImmediate(() => show());
@@ -82,6 +85,7 @@ const Adder = ({
         <Header>
           <Dismiss onClick={dismiss}>X</Dismiss>
           <Title>Add a loop</Title>
+          <Loading isLoading={loading} />
         </Header>
         <Scroller level={getLevel(gif, configuration)}>
           <SourceSelector
