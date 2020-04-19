@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "6aea02bcb8dc4b0bdc36b25e2c45342f",
+    "revision": "70a6206ee30301236fa726708e0f854e",
     "url": "/opz-gif/index.html"
   },
   {
