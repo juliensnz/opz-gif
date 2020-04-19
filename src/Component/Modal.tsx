@@ -24,6 +24,7 @@ const Mask = styled.div`
 `;
 
 const Modal = styled.div`
+  z-index: 9;
   width: ${(props) => props.theme.addModal.windowSize}px;
   height: ${(props) => props.theme.addModal.windowSize + props.theme.addModal.spacing}px;
   background: ${(props) => props.theme.color.white};
