@@ -20,10 +20,11 @@ You can use the project going to https://juliensnz.github.io/opz-gif/
 
 ## Up next:
 
-- remove gif from grid [DONE]
-- add from grid [DONE]
-- escape to dismiss
-- enter to confirm url [DONE]
+- remove gif from grid [DONE v0.1.0]
+- add from grid [DONE v0.1.0]
+- enter to confirm url [DONE v0.1.0]
+- escape to dismiss [DONE v0.1.1]
+- prevent user from loosing data [DONE v0.1.2]
 - remove all
 - local storage
 - add giphy support
@@ -31,3 +32,4 @@ You can use the project going to https://juliensnz.github.io/opz-gif/
 - triming/Sampling gifs
 - support of video formats
 - automatic videopack generation
+- detect if user is offline

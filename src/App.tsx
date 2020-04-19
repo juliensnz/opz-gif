@@ -9,6 +9,7 @@ import {Loops} from './Component/Loops';
 import {sendEvent, UserEvent, sendError} from './tools/analytics';
 import {Wtf} from './Component/Wtf';
 import {Like} from './Component/Like';
+import {useBeforeLeave} from './hooks/leave';
 
 const Container = styled.div`
   display: flex;
@@ -96,6 +97,7 @@ const App = () => {
   const [isLikeModalOpen, openLikeModal, closeLikeModal] = useBooleanState(false);
   const [loops, setLoop, removeLoop] = useLoopState();
   const [currentSprite, setSprite] = useState<number | null>(null);
+  useBeforeLeave(useCallback(() => loops.length === 0 || isLikeModalOpen, [loops, isLikeModalOpen]));
 
   return (
     <Container>
