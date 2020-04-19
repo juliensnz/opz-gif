@@ -16,10 +16,28 @@ enum UserEvent {
   CancelAdd = 'cancel_add',
   LoopAdded = 'loop_added',
   Download = 'download',
+  OpenWtf = 'open_wtf',
+  CloseWtf = 'close_wtf',
+  OpenLike = 'open_like',
+  CloseLike = 'close_like',
 }
 
 // Everytime you relaunch the app, I generate a unique id from nothing to identifiy a session.
-const userId = uuidv4();
+const sessionId = Date.now();
+let userId: null | string = null;
+
+const getUserId = () => {
+  if (null === userId) {
+    if (null === localStorage.getItem('user_id')) {
+      userId = uuidv4();
+      localStorage.setItem('user_id', userId);
+    } else {
+      userId = localStorage.getItem('user_id');
+    }
+  }
+
+  return userId;
+};
 
 const sendError = (type: string, error: Error) => {
   sendEvent(UserEvent.ErrorOccured, {type: type, error});
@@ -35,11 +53,12 @@ const sendEvent = async (type: string, event: any = {}) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        api_key: process.env.AMPLITUDE_API_KEY,
+        api_key: process.env.REACT_APP_ANALYTICS_API_KEY,
         events: [
           {
-            user_id: userId,
-            device_id: userId,
+            user_id: getUserId(),
+            session_id: sessionId,
+            device_id: getUserId(),
             event_type: type,
             time: Date.now(),
             event_properties: event,

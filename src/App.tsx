@@ -7,6 +7,8 @@ import {saveAs} from 'file-saver';
 import {generateZip} from './tools/zip';
 import {Loops} from './Component/Loops';
 import {sendEvent, UserEvent, sendError} from './tools/analytics';
+import {Wtf} from './Component/Wtf';
+import {Like} from './Component/Like';
 
 const Container = styled.div`
   display: flex;
@@ -82,6 +84,8 @@ const useLoopState = (): [Loop[], (loop: Loop) => void] => {
 
 const App = () => {
   const [isAddModalOpen, openAddModal, closeAddModal] = useBooleanState(false);
+  const [isInfoModalOpen, openInfoModal, closeInfoModal] = useBooleanState(false);
+  const [isLikeModalOpen, openLikeModal, closeLikeModal] = useBooleanState(false);
   const [loops, setLoop] = useLoopState();
   const [currentSprite, setSprite] = useState<number | null>(null);
 
@@ -92,6 +96,14 @@ const App = () => {
       </Header>
       <Loops
         loops={loops}
+        onOpenInfoLoop={() => {
+          sendEvent(UserEvent.OpenWtf);
+          openInfoModal();
+        }}
+        onOpenLikeLoop={() => {
+          sendEvent(UserEvent.OpenLike);
+          openLikeModal();
+        }}
         onOpenAddLoop={(sprite: number) => {
           sendEvent(UserEvent.StartAdding, {loop_number: sprite, from: 'loop'});
           setSprite(sprite);
@@ -145,6 +157,22 @@ const App = () => {
             setSprite(null);
           }}
           initialSprite={currentSprite}
+        />
+      )}
+      {isInfoModalOpen && (
+        <Wtf
+          dismissModal={() => {
+            sendEvent(UserEvent.CloseWtf);
+            closeInfoModal();
+          }}
+        />
+      )}
+      {isLikeModalOpen && (
+        <Like
+          dismissModal={() => {
+            sendEvent(UserEvent.CloseLike);
+            closeLikeModal();
+          }}
         />
       )}
     </Container>

@@ -37,6 +37,17 @@ const Item = styled.div`
   );
 `;
 
+const Wtf = styled(Item)`
+  &:hover {
+    cursor: pointer;
+  }
+`;
+const Like = styled(Item)`
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
 const Actions = styled.div`
   position: absolute;
   width: 100%;
@@ -59,8 +70,18 @@ const Actions = styled.div`
   }
 `;
 
-const Loops = ({loops, onOpenAddLoop}: {loops: Loop[]; onOpenAddLoop: (sprite: number) => void}) => {
-  const nonEmptyLoops = [...new Array(16)].map((_content, index: number) => {
+const Loops = ({
+  loops,
+  onOpenAddLoop,
+  onOpenInfoLoop,
+  onOpenLikeLoop,
+}: {
+  loops: Loop[];
+  onOpenAddLoop: (sprite: number) => void;
+  onOpenInfoLoop: () => void;
+  onOpenLikeLoop: () => void;
+}) => {
+  const nonEmptyLoops = [...new Array(14)].map((_content, index: number) => {
     return loops.find((loop) => loop.sprite === index);
   });
 
@@ -77,6 +98,8 @@ const Loops = ({loops, onOpenAddLoop}: {loops: Loop[]; onOpenAddLoop: (sprite: n
             )}
           </Item>
         ))}
+        <Wtf onClick={() => onOpenInfoLoop()}>Wtf?</Wtf>
+        <Like onClick={() => onOpenLikeLoop()}>Like?</Like>
       </Grid>
     </Container>
   );
