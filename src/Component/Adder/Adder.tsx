@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {GIF, Configuration} from '../../tools/gif';
 import styled from 'styled-components';
 import {SourceSelector} from './Adder/SourceSelector';
@@ -7,7 +7,9 @@ import {SpriteSelector} from './Adder/SpriteSelector';
 import {Loop} from '../../model/loop';
 import {useBooleanState} from '../../hooks/boolean';
 import {sendEvent, UserEvent} from '../../tools/analytics';
-import {Container, Modal, Header, Dismiss, Title} from '../Modal';
+import {Container, Modal, Header, Dismiss, Title, Mask} from '../Modal';
+import {useShortcut} from '../../hooks/shortcut';
+import {Key} from '../../tools/key';
 
 const Scroller = styled.div<{level: number}>`
   width: ${(props) => props.theme.addModal.windowSize * 3}px;
@@ -59,25 +61,26 @@ const Adder = ({
     }
   }, [gif, configuration, sprite, onLoopAdd]);
 
+  const dismiss = useCallback(() => {
+    if (null !== configuration) {
+      sendEvent(UserEvent.CancelAdd, {from: 'sprite'});
+    } else if (0 !== gif.length) {
+      sendEvent(UserEvent.CancelAdd, {from: 'configure'});
+    } else {
+      sendEvent(UserEvent.CancelAdd, {from: 'start'});
+    }
+
+    dismissModal();
+  }, [dismissModal, configuration, gif]);
+
+  useShortcut(Key.Escape, dismiss);
+
   return (
     <Container isVisible={isVisible}>
+      <Mask onClick={dismiss} />
       <Modal>
         <Header>
-          <Dismiss
-            onClick={() => {
-              if (null !== configuration) {
-                sendEvent(UserEvent.CancelAdd, {from: 'sprite'});
-              } else if (0 !== gif.length) {
-                sendEvent(UserEvent.CancelAdd, {from: 'configure'});
-              } else {
-                sendEvent(UserEvent.CancelAdd, {from: 'start'});
-              }
-
-              dismissModal();
-            }}
-          >
-            X
-          </Dismiss>
+          <Dismiss onClick={dismiss}>X</Dismiss>
           <Title>Add a loop</Title>
         </Header>
         <Scroller level={getLevel(gif, configuration)}>

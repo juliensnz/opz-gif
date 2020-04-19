@@ -14,6 +14,14 @@ const Container = styled.div<{isVisible: boolean}>`
 
   transition: opacity 0.5s ease-in-out;
 `;
+const Mask = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+`;
 
 const Modal = styled.div`
   width: ${(props) => props.theme.addModal.windowSize}px;
@@ -58,4 +66,4 @@ const Title = styled.div`
   font-weight: 200;
 `;
 
-export {Container, Modal, Header, Dismiss, Title};
+export {Container, Mask, Modal, Header, Dismiss, Title};

@@ -1,7 +1,9 @@
 import React, {useEffect} from 'react';
 import {useBooleanState} from '../hooks/boolean';
-import {Container, Modal, Header, Dismiss, Title} from './Modal';
+import {Container, Modal, Header, Dismiss, Title, Mask} from './Modal';
 import styled from 'styled-components';
+import {useShortcut} from '../hooks/shortcut';
+import {Key} from '../tools/key';
 
 const Content = styled.div`
   padding: 20px 50px;
@@ -21,8 +23,11 @@ const Like = ({dismissModal}: {dismissModal: () => void}) => {
   useEffect(() => {
     setImmediate(() => show());
   }, [show]);
+  useShortcut(Key.Escape, dismissModal);
+
   return (
     <Container isVisible={isVisible}>
+      <Mask onClick={dismissModal} />
       <Modal>
         <Header>
           <Dismiss
