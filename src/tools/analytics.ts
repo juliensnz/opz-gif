@@ -9,17 +9,18 @@ const uuidv4 = () => {
 };
 
 enum UserEvent {
-  AppLaunch = 'app_launch',
-  ErrorOccured = 'error_occured',
-  StartAdding = 'start_adding',
-  GifSelected = 'gif_selected',
-  CancelAdd = 'cancel_add',
-  LoopAdded = 'loop_added',
-  Download = 'download',
-  OpenWtf = 'open_wtf',
-  CloseWtf = 'close_wtf',
-  OpenLike = 'open_like',
-  CloseLike = 'close_like',
+  AppLaunch = 'app_launch_event',
+  ErrorOccured = 'error_occured_event',
+  StartAdding = 'start_adding_event',
+  GifSelected = 'gif_selected_event',
+  CancelAdd = 'cancel_add_event',
+  LoopAdded = 'loop_added_event',
+  LoopRemoved = 'loop_removed_event',
+  Download = 'download_event',
+  OpenWtf = 'open_wtf_event',
+  CloseWtf = 'close_wtf_event',
+  OpenLike = 'open_like_event',
+  CloseLike = 'close_like_event',
 }
 
 // Everytime you relaunch the app, I generate a unique id from nothing to identifiy a session.

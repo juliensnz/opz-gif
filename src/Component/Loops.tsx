@@ -63,6 +63,7 @@ const Actions = styled.div`
   color: ${(props) => props.theme.color.black};
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
+  display: flex;
 
   &:hover {
     cursor: pointer;
@@ -70,14 +71,28 @@ const Actions = styled.div`
   }
 `;
 
+const Action = styled.div`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  height: 100%;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+`;
+
 const Loops = ({
   loops,
   onOpenAddLoop,
+  onRemoveLoop,
   onOpenInfoLoop,
   onOpenLikeLoop,
 }: {
   loops: Loop[];
   onOpenAddLoop: (sprite: number) => void;
+  onRemoveLoop: (sprite: number) => void;
   onOpenInfoLoop: () => void;
   onOpenLikeLoop: () => void;
 }) => {
@@ -92,8 +107,16 @@ const Loops = ({
           <Item key={index}>
             {undefined === loop ? index < 14 ? index + 1 : '' : <Player gif={loop.gif} width={300} />}
             {index < 14 && (
-              <Actions onClick={() => (undefined === loop ? onOpenAddLoop(index) : onOpenAddLoop(index))}>
-                {undefined === loop ? <span>Add</span> : <span>Edit</span>}
+              <Actions>
+                {undefined === loop ? (
+                  <>
+                    <Action onClick={() => onOpenAddLoop(index)}>Add</Action>
+                  </>
+                ) : (
+                  <>
+                    <Action onClick={() => onRemoveLoop(index)}>Delete</Action>
+                  </>
+                )}
               </Actions>
             )}
           </Item>

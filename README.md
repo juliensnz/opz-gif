@@ -20,9 +20,9 @@ You can use the project going to https://juliensnz.github.io/opz-gif/
 
 ## Up next:
 
-- remove gif from grid
+- remove gif from grid [DONE]
 - add from grid [DONE]
-- escape to dismiss [DONE]
+- escape to dismiss
 - enter to confirm url [DONE]
 - remove all
 - local storage
@@ -30,3 +30,4 @@ You can use the project going to https://juliensnz.github.io/opz-gif/
 - managing multiple video packs
 - triming/Sampling gifs
 - support of video formats
+- automatic videopack generation

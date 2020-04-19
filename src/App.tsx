@@ -67,7 +67,7 @@ const DownloadButton = styled.div`
   }
 `;
 
-const useLoopState = (): [Loop[], (loop: Loop) => void] => {
+const useLoopState = (): [Loop[], (loop: Loop) => void, (loopToRemove: number) => void] => {
   const [loops, setLoops] = useState<Loop[]>([]);
 
   const setLoop = useCallback(
@@ -78,15 +78,23 @@ const useLoopState = (): [Loop[], (loop: Loop) => void] => {
     },
     [loops, setLoops]
   );
+  const removeLoop = useCallback(
+    (loopToRemove: number) => {
+      const updatedLoops = [...loops].filter((loop) => loop.sprite !== loopToRemove);
 
-  return [loops, setLoop];
+      setLoops(updatedLoops);
+    },
+    [loops, setLoops]
+  );
+
+  return [loops, setLoop, removeLoop];
 };
 
 const App = () => {
   const [isAddModalOpen, openAddModal, closeAddModal] = useBooleanState(false);
   const [isInfoModalOpen, openInfoModal, closeInfoModal] = useBooleanState(false);
   const [isLikeModalOpen, openLikeModal, closeLikeModal] = useBooleanState(false);
-  const [loops, setLoop] = useLoopState();
+  const [loops, setLoop, removeLoop] = useLoopState();
   const [currentSprite, setSprite] = useState<number | null>(null);
 
   return (
@@ -99,6 +107,10 @@ const App = () => {
         onOpenInfoLoop={() => {
           sendEvent(UserEvent.OpenWtf);
           openInfoModal();
+        }}
+        onRemoveLoop={(sprite: number) => {
+          sendEvent(UserEvent.LoopRemoved);
+          removeLoop(sprite);
         }}
         onOpenLikeLoop={() => {
           sendEvent(UserEvent.OpenLike);
