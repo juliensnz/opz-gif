@@ -1,10 +1,11 @@
-import React, {ChangeEvent, useContext} from 'react';
+import React, {ChangeEvent, useContext, useCallback, useState} from 'react';
 import styled from 'styled-components';
 import {GIF, getBase64, getGif} from '../../../../tools/gif';
 import {Back} from '../../../Style/Back';
 import {Source} from '../SourceSelector';
 import {sendEvent, UserEvent, sendError} from '../../../../tools/analytics';
 import {LoadingContext} from '../../../../context/loading';
+import {useMounted} from '../../../../hooks/mounted';
 
 const WINDOW_SIZE = 600;
 const Container = styled.div<{selected: boolean; previous: boolean}>`
@@ -59,6 +60,10 @@ const Explanation = styled.div`
   justify-content: center;
   font-size: 20px;
   font-weight: 200;
+  flex-direction: column;
+`;
+const ErrorDisplay = styled.span`
+  color: ${(props) => props.theme.color.red};
 `;
 const Input = styled.input`
   position: absolute;
@@ -85,6 +90,35 @@ const FileSource = ({
   onGifSelected: (gif: GIF) => void;
 }) => {
   const [loading, setLoading] = useContext(LoadingContext);
+  const isMounted = useMounted(() => setLoading(false));
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
+      if (true === loading) return;
+      if (null === event.target.files || 'image/gif' !== event.target.files[0].type) {
+        return;
+      }
+      setLoading(true);
+
+      try {
+        const gifData = await getBase64(event.target.files[0]);
+        const newGif = await getGif(gifData);
+
+        if (!isMounted()) return;
+        setLoading(false);
+        sendEvent(UserEvent.GifSelected, {type: 'file'});
+        onGifSelected(newGif);
+      } catch (error) {
+        sendError('cannot_generate_gif_from_file', error);
+        setError(`Error: ${error}`);
+
+        if (!isMounted()) return;
+        setLoading(false);
+      }
+    },
+    [onGifSelected, setLoading, loading, isMounted]
+  );
 
   return (
     <Container selected={Source.File === selected} previous={previous}>
@@ -95,27 +129,12 @@ const FileSource = ({
         </Back>
       )}
       <DropZone visible={Source.File === selected}>
-        <Explanation>Click here or directly drop your file</Explanation>
-        <Input
-          type="file"
-          onChange={async (event: ChangeEvent<HTMLInputElement>) => {
-            if (null === event.target.files || 'image/gif' !== event.target.files[0].type) {
-              return;
-            }
-            setLoading(true);
+        <Explanation>
+          <span>Click here or directly drop your file</span>
+          {null !== error && <ErrorDisplay>{error}</ErrorDisplay>}
+        </Explanation>
 
-            try {
-              const gifData = await getBase64(event.target.files[0]);
-              const newGif = await getGif(gifData);
-              sendEvent(UserEvent.GifSelected, {type: 'file'});
-              onGifSelected(newGif);
-              setLoading(false);
-            } catch (error) {
-              sendError('cannot_generate_gif_from_file', error);
-              setLoading(false);
-            }
-          }}
-        />
+        <Input type="file" onChange={submit} />
       </DropZone>
 
       {previous && (

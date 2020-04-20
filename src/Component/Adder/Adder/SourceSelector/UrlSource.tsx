@@ -6,6 +6,7 @@ import {Source} from '../SourceSelector';
 import {useAutoFocus} from '../../../../hooks/focus';
 import {sendEvent, UserEvent, sendError} from '../../../../tools/analytics';
 import {LoadingContext} from '../../../../context/loading';
+import {useMounted} from '../../../../hooks/mounted';
 
 const Container = styled.div<{selected: boolean; previous: boolean}>`
   background-color: ${(props) => props.theme.color.yellow};
@@ -62,6 +63,17 @@ const Submit = styled.span`
     cursor: pointer;
   }
 `;
+const ErrorDisplay = styled.span`
+  color: ${(props) => props.theme.color.red};
+  margin: 0 10px 10px 10px;
+  padding: 0 5px 10px 5px;
+  font-size: 15px;
+  text-align: left;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
 
 const UrlSource = ({
   selected,
@@ -76,6 +88,8 @@ const UrlSource = ({
 }) => {
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useContext(LoadingContext);
+  const isMounted = useMounted(() => setLoading(false));
+  const [error, setError] = useState<string | null>(null);
 
   const urlRef = useRef<HTMLInputElement>(null);
   const setFocus = useAutoFocus(urlRef);
@@ -88,20 +102,28 @@ const UrlSource = ({
       setTimeout(() => setUrl(''), 500);
     }
   }, [selected, previous, setFocus]);
+
   const submit = useCallback(async () => {
+    if (true === loading) return;
     setLoading(true);
+    setError(null);
 
     try {
       const gifData = await getDataUrl(url);
       const newGif = await getGif(gifData);
+
+      if (!isMounted()) return;
+      setLoading(false);
       sendEvent(UserEvent.GifSelected, {type: 'url'});
       onGifSelected(newGif);
-      setLoading(false);
     } catch (error) {
       sendError('cannot_generate_gif_from_url', error);
-      console.error(error);
+      setError(`Error: ${error}`);
+
+      if (!isMounted()) return;
+      setLoading(false);
     }
-  }, [url, onGifSelected, setLoading]);
+  }, [url, onGifSelected, setLoading, loading, isMounted]);
 
   return (
     <Container selected={Source.Url === selected} previous={previous}>
@@ -122,6 +144,7 @@ const UrlSource = ({
           value={url}
         />
         <Submit onClick={submit}>Confirm</Submit>
+        {null !== error && <ErrorDisplay>{error}</ErrorDisplay>}
       </Form>
       {previous && (
         <Back vertical={true} onClick={() => onGifSelected([])}>

@@ -52,7 +52,7 @@ const Adder = ({
 
   useEffect(() => {
     setImmediate(() => show());
-  }, [show]);
+  }, []);
 
   useEffect(() => {
     if (0 !== gif.length && null !== configuration && null !== sprite) {

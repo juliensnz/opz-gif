@@ -41,10 +41,13 @@ const getUserId = () => {
 };
 
 const sendError = (type: string, error: Error) => {
+  console.error(type, error);
   sendEvent(UserEvent.ErrorOccured, {type: type, error});
 };
 
 const sendEvent = async (type: string, event: any = {}) => {
+  if ('development' === process.env.NODE_ENV) return;
+
   try {
     await fetch(AMPLITUDE_URL, {
       method: 'POST',
@@ -63,7 +66,7 @@ const sendEvent = async (type: string, event: any = {}) => {
             event_type: type,
             time: Date.now(),
             event_properties: event,
-            app_version: `${process.env.REACT_APP_VERSION}-${process.env.NODE_ENV}`,
+            app_version: process.env.REACT_APP_VERSION,
           },
         ],
       }),

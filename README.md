@@ -35,3 +35,4 @@ You can use the project going to https://juliensnz.github.io/opz-gif/
 - support of video formats
 - automatic videopack generation
 - detect if user is offline
+- youtube video support (could be tricky)

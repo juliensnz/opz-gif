@@ -34,18 +34,25 @@ const getImage = async (url: string): Promise<HTMLImageElement> => {
 };
 
 const getDataUrl = async (url: string): Promise<string> => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
+      if ('image/gif' !== xhr.response.type) {
+        reject(`Url "${url}" does not lead to a gif file`);
+      }
+
       var reader = new FileReader();
       reader.onloadend = function () {
         if (null === reader.result) {
-          throw Error(`Cannot fetch "${url}"`);
+          reject(`Cannot read file for url "${url}"`);
         }
 
         resolve(reader.result as string);
       };
       reader.readAsDataURL(xhr.response);
+    };
+    xhr.onerror = () => {
+      reject(`Cannot fetch url "${url}"`);
     };
     xhr.open('GET', url);
     xhr.responseType = 'blob';
