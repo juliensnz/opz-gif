@@ -64,6 +64,7 @@ const Explanation = styled.div`
   flex-direction: column;
   box-sizing: border-box;
 `;
+
 const ErrorDisplay = styled.span`
   color: ${(props) => props.theme.color.white};
   text-align: center;

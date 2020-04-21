@@ -37,6 +37,12 @@ const getImage = async (url: string): Promise<HTMLImageElement> => {
 
 const getDataUrl = async (url: string): Promise<string> => {
   return new Promise((resolve, reject) => {
+    if (!new RegExp(`^(https?|ftp)://[^\s/$.?#].[^\s]*$`, 'is').test(url)) {
+      reject(`Please provide a valid URL`);
+
+      return;
+    }
+
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
       if ('image/gif' !== xhr.response.type) {
