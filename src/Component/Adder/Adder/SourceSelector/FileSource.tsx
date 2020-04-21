@@ -60,10 +60,14 @@ const Explanation = styled.div`
   justify-content: center;
   font-size: 20px;
   font-weight: 200;
+  padding: 20px;
   flex-direction: column;
+  box-sizing: border-box;
 `;
 const ErrorDisplay = styled.span`
-  color: ${(props) => props.theme.color.red};
+  color: ${(props) => props.theme.color.white};
+  text-align: center;
+  margin-top: 20px;
 `;
 const Input = styled.input`
   position: absolute;
@@ -96,7 +100,13 @@ const FileSource = ({
   const submit = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
       if (true === loading) return;
-      if (null === event.target.files || 'image/gif' !== event.target.files[0].type) {
+      if (null === event.target.files) return;
+      if ('image/gif' !== event.target.files[0].type) {
+        const error = new Error(
+          `File type "${event.target.files[0].type}" are not supported yet. Only .gif files are supported for now.`
+        );
+        sendError('cannot_generate_gif_from_file', error);
+        setError(`Error: ${error.message}`);
         return;
       }
       setLoading(true);

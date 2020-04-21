@@ -10,6 +10,8 @@ export type Configuration = {
   sample: Sample;
 };
 
+const blockedProviders = ['media.gifs.nl'];
+
 const getBase64 = async (file: File): Promise<string> => {
   return new Promise((resolve) => {
     var reader = new FileReader();
@@ -51,8 +53,20 @@ const getDataUrl = async (url: string): Promise<string> => {
       };
       reader.readAsDataURL(xhr.response);
     };
-    xhr.onerror = () => {
-      reject(`Cannot fetch url "${url}"`);
+    xhr.onerror = (error) => {
+      if (blockedProviders.some((provider) => -1 !== url.indexOf(provider))) {
+        reject(
+          `The provider "${blockedProviders.find(
+            (provider) => -1 !== url.indexOf(provider)
+          )}" does not allow to download gifs from external tools.
+          It's not ideal but you can download the gif yourself and import it using the file section below 😉`
+        );
+      } else {
+        reject(
+          `Cannot fetch url "${url}". It's likely to be related a right limitation coming from
+          the image provider. Try to download it yourself and import it using the file section below 😉`
+        );
+      }
     };
     xhr.open('GET', url);
     xhr.responseType = 'blob';
