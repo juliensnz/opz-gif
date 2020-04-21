@@ -26,7 +26,7 @@ You can use the project going to https://juliensnz.github.io/opz-gif/
 - escape to dismiss [DONE v0.1.1]
 - prevent user from loosing data [DONE v0.1.2]
 - add a loading indicator [DONE v0.1.3]
-- prevent triggering after modal is dismissed
+- prevent triggering after modal is dismissed [DONE v0.1.4]
 - remove all
 - local storage
 - add giphy support
