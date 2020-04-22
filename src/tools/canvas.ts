@@ -1,4 +1,4 @@
-import {GIF} from './gif';
+import {GIF, Sample, Configuration, Frame} from './gif';
 
 const FRAME_WIDTH = 1014;
 const FRAME_HEIGHT = 468;
@@ -21,6 +21,9 @@ const drawImage = (canvas: HTMLCanvasElement, imageData: ImageData) => {
   context.drawImage(canvas, 0, 0, FRAME_WIDTH, FRAME_HEIGHT);
 };
 
+const getAnimate = (configuration: Configuration) =>
+  configuration.mode === Sample.Trim ? getTrimedFrames : getSampledFrames;
+
 const getTrimedFrames = (gif: GIF) => {
   const frameCount = Math.floor(ANIMATION_LENGTH / (gif[0].delay * 10));
 
@@ -32,20 +35,22 @@ const getSampledFrames = (gif: GIF) => {
   return [...new Array(30)].map((_value: any, index: number) => getFrame(gif.length, index));
 };
 
-const animateTrimed = (canvas: HTMLCanvasElement, gif: GIF): number => {
-  let cpt = 0;
-  const frames = getTrimedFrames(gif);
+const filterGif = (gif: GIF, start: number, end: number): GIF => {
+  let previousPosition = 0;
+  return gif.filter((frame: Frame) => {
+    const position = previousPosition + frame.delay * 10;
 
-  return setInterval(() => {
-    const imageData = gif[frames[cpt % 30]].data;
-    drawImage(canvas, imageData);
-    cpt++;
-  }, ANIMATION_LENGTH / 30);
+    previousPosition = position;
+    return position >= start && position <= end;
+  });
 };
 
-const animateSampled = (canvas: HTMLCanvasElement, gif: GIF): number => {
+const animate = (canvas: HTMLCanvasElement, gif: GIF, configuration: Configuration): number => {
   let cpt = 0;
-  const frames = getSampledFrames(gif);
+  debugger;
+  const trimedGif = filterGif(gif, configuration.start, configuration.end);
+  const frames = getAnimate(configuration)(trimedGif);
+
   return setInterval(() => {
     const imageData = gif[frames[cpt % 30]].data;
     drawImage(canvas, imageData);
@@ -109,11 +114,10 @@ const generateSprite = async (images: ImageData[]): Promise<string> => {
 export {
   addImageToCanvas,
   scaleImage,
-  animateTrimed,
-  animateSampled,
+  animate,
+  getAnimate,
   generateSprite,
   getImages,
-  getTrimedFrames,
   clearCanvas,
   FRAME_WIDTH,
   FRAME_HEIGHT,

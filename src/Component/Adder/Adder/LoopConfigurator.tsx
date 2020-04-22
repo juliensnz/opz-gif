@@ -1,9 +1,10 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState, useEffect, useCallback} from 'react';
 import styled, {useTheme, ThemeContext} from 'styled-components';
-import {GIF, Sample, Configuration, getGifLength} from '../../../tools/gif';
+import {GIF, Sample, Configuration, getGifLength, getGifStepLength} from '../../../tools/gif';
 import {Player} from '../../Player';
 import {Back} from '../../Style/Back';
 import {Cutter} from './LoopConfigurator/Cutter';
+import {getAnimate} from '../../../tools/canvas';
 
 const Container = styled.div`
   display: flex;
@@ -38,20 +39,45 @@ const LoopConfigurator = ({
 }: {
   gif: GIF;
   previous: boolean;
-  onLoopConfirmation: (loop: Configuration | null) => void;
+  onLoopConfirmation: (mode: Configuration | null) => void;
 }) => {
-  console.log(getGifLength(gif));
   const theme = useContext(ThemeContext);
+  const [configuration, setConfiguration] = useState({start: 0, end: getGifLength(gif), mode: Sample.Trim});
+  const [tooShort, setTooShort] = useState(false);
+
+  useEffect(() => {
+    if (2000 > getGifLength(gif)) {
+      setConfiguration({start: 0, end: getGifLength(gif), mode: Sample.Sample});
+      setTooShort(true);
+    } else {
+      setConfiguration({start: 0, end: 2000, mode: Sample.Trim});
+      setTooShort(false);
+    }
+  }, [gif]);
+  console.log(configuration);
 
   return (
     <Container>
       {gif.length !== 0 && (
         <>
-          <Player gif={gif} width={theme.addModal.windowSize - theme.addModal.spacing * 3} />
-          <Cutter length={getGifLength(gif)} start={345} end={1350} mode={Sample.Trim} gif={gif} onChange={() => {}} />
+          <Player
+            gif={gif}
+            configuration={configuration}
+            width={theme.addModal.windowSize - theme.addModal.spacing * 3}
+          />
+          <Cutter
+            length={getGifLength(gif)}
+            start={configuration.start}
+            end={configuration.end}
+            mode={configuration.mode}
+            gif={gif}
+            onChange={(start, end) => {
+              setConfiguration({...configuration, start, end});
+            }}
+          />
           <Submit
             onClick={() => {
-              onLoopConfirmation({sample: Sample.Trim});
+              onLoopConfirmation(configuration);
             }}
           >
             Confirm

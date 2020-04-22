@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {Sample, GIF} from '../../../../tools/gif';
+import {Sample, GIF, getGifStepLength} from '../../../../tools/gif';
+import {Handle, Position} from './Handle';
 
 const Container = styled.div`
   width: ${(props) => props.theme.addModal.windowSize - props.theme.addModal.spacing * 3}px;
@@ -25,58 +26,6 @@ const CutBoard = styled.div`
   position: relative;
   font-size: 12px;
 `;
-const Grabber = styled.span`
-  width: 10px;
-  height: 20px;
-  border: 1px solid ${(props) => props.theme.color.grey};
-  background: repeating-linear-gradient(
-    120deg,
-    ${(props) => props.theme.color.grey},
-    ${(props) => props.theme.color.grey} 5px,
-    ${(props) => props.theme.color.white} 5px,
-    ${(props) => props.theme.color.white} 6px
-  );
-`;
-const HandleGrabber = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-const Pin = styled.div`
-  background: ${(props) => props.theme.color.grey};
-  width: 1px;
-  height: 5px;
-`;
-const Handle = styled.div<{position: number}>`
-  display: flex;
-  position: absolute;
-  top: 0;
-  left: ${(props) => props.position * 100}%;
-  display: flex;
-  align-items: center;
-  ${Grabber} {
-    border-bottom-right-radius: 5px;
-    border-bottom-left-radius: 5px;
-  }
-`;
-const StartHandle = styled(Handle)<{position: number}>`
-  ${Grabber} {
-    border-top-right-radius: 5px;
-  }
-  ${HandleGrabber} {
-    align-items: flex-start;
-  }
-`;
-const EndHandle = styled(Handle)<{position: number}>`
-  ${Grabber} {
-    border-top-left-radius: 5px;
-  }
-  ${HandleGrabber} {
-    align-items: flex-end;
-  }
-`;
-const HandleTime = styled.span`
-  margin-left: 3px;
-`;
 
 const Start = styled.div`
   position: relative;
@@ -90,19 +39,30 @@ const End = styled.div`
   right: -20px;
   text-align: center;
 `;
-const Trim = styled.div<{size: number}>`
-  width: ${(props) => props.size * 100}%;
+const Trim = styled.div`
   height: 100%;
 `;
 const TrimStart = styled(Trim)`
-  background: red;
+  background: repeating-linear-gradient(
+    120deg,
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.1) 5px,
+    ${(props) => props.theme.color.grey} 5px,
+    ${(props) => props.theme.color.grey} 6px
+  );
 `;
-const TrimCenter = styled(Trim)`
-  background: blue;
-`;
+
 const TrimEnd = styled(Trim)`
-  background: green;
+  background: repeating-linear-gradient(
+    120deg,
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.1) 5px,
+    ${(props) => props.theme.color.grey} 5px,
+    ${(props) => props.theme.color.grey} 6px
+  );
+  background-position-x: right;
 `;
+const TrimCenter = styled(Trim)``;
 
 type CutterProps = {
   length: number;
@@ -113,39 +73,66 @@ type CutterProps = {
   onChange: (start: number, end: number) => void;
 };
 
-const getLengthLabel = (length: number): string => `${(length / 1000).toString().replace('.', '"')}`;
+const getTimeLabel = (time: number): string => `${(time / 1000).toString().replace('.', '"')}`;
 
 const Cutter = ({length, start, end, mode, gif, onChange}: CutterProps) => {
+  const [state, setState] = useState({start, end});
+  useEffect(() => {
+    setState({start, end});
+  }, [start, end]);
+
+  const onStartChange = useCallback(
+    (newStart: number) => {
+      setState({...state, start: newStart});
+    },
+    [state]
+  );
+  const onEndChange = useCallback(
+    (newEnd: number) => {
+      setState({...state, end: newEnd});
+    },
+    [state]
+  );
+  const onEnd = useCallback(() => {
+    onChange(state.start, state.end);
+  }, [state]);
+
+  const split = Sample.Sample === mode ? getGifStepLength(gif) * 3 : 2000;
+
   return (
     <Container>
       <Timing>
         <Start>0</Start>
         <Spacer />
-        <End>{getLengthLabel(length)}</End>
+        <End>{getTimeLabel(length)}</End>
       </Timing>
       <Timeline>
-        <TrimStart size={start / length} />
-        <TrimCenter size={(length - (start + length - end)) / length} />
-        <TrimEnd size={(length - end) / length} />
+        <TrimStart style={{width: `${(state.start / length) * 100}%`}} />
+        <TrimCenter style={{width: `${((length - (state.start + length - state.end)) / length) * 100}%`}} />
+        <TrimEnd style={{width: `${((length - state.end) / length) * 100}%`}} />
       </Timeline>
       <CutBoard>
-        <StartHandle position={start / length}>
-          <HandleGrabber>
-            <Pin />
-            <Grabber />
-          </HandleGrabber>
-          <HandleTime>{getLengthLabel(start)}</HandleTime>
-        </StartHandle>
-        <EndHandle position={end / length}>
-          <HandleGrabber>
-            <Pin />
-            <Grabber />
-          </HandleGrabber>
-          <HandleTime>{getLengthLabel(end)}</HandleTime>
-        </EndHandle>
+        <Handle
+          value={state.start}
+          position={Position.Start}
+          min={0}
+          max={state.end - split}
+          length={length}
+          onChange={onStartChange}
+          onEnd={onEnd}
+        />
+        <Handle
+          value={state.end}
+          position={Position.End}
+          min={state.start + split}
+          max={length}
+          length={length}
+          onChange={onEndChange}
+          onEnd={onEnd}
+        />
       </CutBoard>
     </Container>
   );
 };
 
-export {Cutter};
+export {Cutter, getTimeLabel};

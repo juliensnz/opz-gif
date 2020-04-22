@@ -2,6 +2,7 @@ import React from 'react';
 import {Loop} from '../model/loop';
 import styled from 'styled-components';
 import {Player} from './Player';
+import {getAnimate} from '../tools/canvas';
 
 const Container = styled.div`
   flex: 1;
@@ -105,7 +106,15 @@ const Loops = ({
       <Grid>
         {nonEmptyLoops.map((loop: Loop | undefined, index: number) => (
           <Item key={index}>
-            {undefined === loop ? index < 14 ? index + 1 : '' : <Player gif={loop.gif} width={300} />}
+            {undefined === loop ? (
+              index < 14 ? (
+                index + 1
+              ) : (
+                ''
+              )
+            ) : (
+              <Player gif={loop.gif} width={300} configuration={loop.configuration} />
+            )}
             {index < 14 && (
               <Actions>
                 {undefined === loop ? (
