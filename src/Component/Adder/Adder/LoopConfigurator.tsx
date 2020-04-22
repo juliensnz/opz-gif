@@ -1,10 +1,9 @@
-import React, {useContext, useState, useEffect, useCallback} from 'react';
-import styled, {useTheme, ThemeContext} from 'styled-components';
-import {GIF, Sample, Configuration, getGifLength, getGifStepLength} from '../../../tools/gif';
+import React, {useContext, useState, useEffect} from 'react';
+import styled, {ThemeContext} from 'styled-components';
+import {GIF, Sample, Configuration, getGifLength} from '../../../tools/gif';
 import {Player} from '../../Player';
 import {Back} from '../../Style/Back';
 import {Cutter} from './LoopConfigurator/Cutter';
-import {getAnimate} from '../../../tools/canvas';
 
 const Container = styled.div`
   display: flex;
@@ -44,7 +43,7 @@ const LoopConfigurator = ({
   const theme = useContext(ThemeContext);
   const [configuration, setConfiguration] = useState({start: 0, end: getGifLength(gif), mode: Sample.Trim});
   const [tooShort, setTooShort] = useState(false);
-
+  console.log(tooShort);
   useEffect(() => {
     if (2000 > getGifLength(gif)) {
       setConfiguration({start: 0, end: getGifLength(gif), mode: Sample.Sample});
@@ -54,7 +53,6 @@ const LoopConfigurator = ({
       setTooShort(false);
     }
   }, [gif]);
-  console.log(configuration);
 
   return (
     <Container>

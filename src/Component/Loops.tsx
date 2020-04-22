@@ -2,7 +2,6 @@ import React from 'react';
 import {Loop} from '../model/loop';
 import styled from 'styled-components';
 import {Player} from './Player';
-import {getAnimate} from '../tools/canvas';
 
 const Container = styled.div`
   flex: 1;

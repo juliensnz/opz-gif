@@ -83,21 +83,22 @@ const Cutter = ({length, start, end, mode, gif, onChange}: CutterProps) => {
 
   const onStartChange = useCallback(
     (newStart: number) => {
-      setState({...state, start: newStart});
+      console.log(mode);
+      Sample.Sample === mode
+        ? setState({...state, start: newStart})
+        : setState({start: newStart, end: newStart + 2000});
     },
-    [state]
+    [state, mode]
   );
   const onEndChange = useCallback(
     (newEnd: number) => {
-      setState({...state, end: newEnd});
+      Sample.Sample === mode ? setState({...state, end: newEnd}) : setState({start: newEnd - 2000, end: newEnd});
     },
-    [state]
+    [state, mode]
   );
   const onEnd = useCallback(() => {
     onChange(state.start, state.end);
-  }, [state]);
-
-  const split = Sample.Sample === mode ? getGifStepLength(gif) * 3 : 2000;
+  }, [state, onChange]);
 
   return (
     <Container>
@@ -116,7 +117,7 @@ const Cutter = ({length, start, end, mode, gif, onChange}: CutterProps) => {
           value={state.start}
           position={Position.Start}
           min={0}
-          max={state.end - split}
+          max={Sample.Sample === mode ? state.end - getGifStepLength(gif) * 3 : length - 2000}
           length={length}
           onChange={onStartChange}
           onEnd={onEnd}
@@ -124,7 +125,7 @@ const Cutter = ({length, start, end, mode, gif, onChange}: CutterProps) => {
         <Handle
           value={state.end}
           position={Position.End}
-          min={state.start + split}
+          min={Sample.Sample === mode ? state.start + getGifStepLength(gif) * 3 : 2000}
           max={length}
           length={length}
           onChange={onEndChange}

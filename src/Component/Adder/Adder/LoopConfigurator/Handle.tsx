@@ -81,17 +81,20 @@ const Handle = ({
   const Element = position === Position.Start ? StartHandle : EndHandle;
   const [parentWidth, setParentWidth] = useState<number>(0);
   const [currentPosition, setCurrentPosition] = useState<number>((value / length) * parentWidth);
-  useEffect(() => setCurrentPosition((value / length) * parentWidth), [value, parentWidth]);
+  useEffect(() => {
+    setCurrentPosition((value / length) * parentWidth);
+  }, [value, parentWidth, length]);
 
   const [grabberStartX, setGrabberStartX] = useState<number>(0);
   const [isDragged, setIsDragged] = useState<boolean>(false);
 
   const containerRef = useRef(null);
   useEffect(() => {
+    setIsDragged(false);
     null !== containerRef.current &&
       (containerRef.current as any).parentNode &&
       setParentWidth((containerRef.current as any).parentNode.getBoundingClientRect().width);
-  }, [containerRef.current]);
+  }, []);
 
   const mouseDown = useCallback(
     (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -123,7 +126,7 @@ const Handle = ({
         onChange(Math.round((newPosition / parentWidth) * length));
       }
     },
-    [isDragged, setIsDragged, setGrabberStartX]
+    [isDragged, setIsDragged, currentPosition, grabberStartX, length, max, min, onChange, parentWidth]
   );
   const mouseUp = useCallback(
     (event) => {
@@ -131,7 +134,7 @@ const Handle = ({
       event.preventDefault();
       onEnd();
     },
-    [isDragged, setIsDragged, setGrabberStartX, onEnd]
+    [setIsDragged, onEnd]
   );
 
   return (

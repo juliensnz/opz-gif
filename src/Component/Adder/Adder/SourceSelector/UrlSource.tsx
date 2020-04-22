@@ -86,7 +86,7 @@ const UrlSource = ({
   onSelected: () => void;
   onGifSelected: (gif: GIF) => void;
 }) => {
-  const [url, setUrl] = useState('https://media.giphy.com/media/l0HlO4vdchLBZNxYc/giphy.gif');
+  const [url, setUrl] = useState('');
   const [loading, setLoading] = useContext(LoadingContext);
   const isMounted = useMounted(() => setLoading(false));
   const [error, setError] = useState<string | null>(null);

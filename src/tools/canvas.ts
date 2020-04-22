@@ -47,12 +47,11 @@ const filterGif = (gif: GIF, start: number, end: number): GIF => {
 
 const animate = (canvas: HTMLCanvasElement, gif: GIF, configuration: Configuration): number => {
   let cpt = 0;
-  debugger;
   const trimedGif = filterGif(gif, configuration.start, configuration.end);
   const frames = getAnimate(configuration)(trimedGif);
 
   return setInterval(() => {
-    const imageData = gif[frames[cpt % 30]].data;
+    const imageData = trimedGif[frames[cpt % 30]].data;
     drawImage(canvas, imageData);
     cpt++;
   }, ANIMATION_LENGTH / 30);

@@ -19,11 +19,9 @@ const Player = ({gif, width, configuration}: {gif: GIF; width: number; configura
 
   useEffect(() => {
     if (null !== canvasRef && null !== canvasRef.current) {
-      debugger;
       const timer = animate(canvasRef.current as any, gif, configuration);
 
       return () => {
-        debugger;
         clearInterval(timer);
       };
     }
