@@ -35,6 +35,8 @@ const getImage = async (url: string): Promise<HTMLImageElement> => {
   });
 };
 
+const getGifLength = (gif: GIF) => (0 === gif.length ? 0 : gif.length * gif[0].delay * 10);
+
 const getDataUrl = async (url: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     var xhr = new XMLHttpRequest();
@@ -91,4 +93,4 @@ const getGif = async (urlData: string): Promise<GIF> => {
   return (await getSuperGif(image)).get_frames();
 };
 
-export {getGif, getImage, getBase64, getDataUrl};
+export {getGif, getImage, getBase64, getDataUrl, getGifLength};

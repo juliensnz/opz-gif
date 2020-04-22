@@ -1,8 +1,9 @@
-import React from 'react';
-import styled from 'styled-components';
-import {GIF, Sample, Configuration} from '../../../tools/gif';
+import React, {useContext} from 'react';
+import styled, {useTheme, ThemeContext} from 'styled-components';
+import {GIF, Sample, Configuration, getGifLength} from '../../../tools/gif';
 import {Player} from '../../Player';
 import {Back} from '../../Style/Back';
+import {Cutter} from './LoopConfigurator/Cutter';
 
 const Container = styled.div`
   display: flex;
@@ -39,11 +40,15 @@ const LoopConfigurator = ({
   previous: boolean;
   onLoopConfirmation: (loop: Configuration | null) => void;
 }) => {
+  console.log(getGifLength(gif));
+  const theme = useContext(ThemeContext);
+
   return (
     <Container>
       {gif.length !== 0 && (
         <>
-          <Player gif={gif} width={420} />
+          <Player gif={gif} width={theme.addModal.windowSize - theme.addModal.spacing * 3} />
+          <Cutter length={getGifLength(gif)} start={345} end={1350} mode={Sample.Trim} gif={gif} onChange={() => {}} />
           <Submit
             onClick={() => {
               onLoopConfirmation({sample: Sample.Trim});

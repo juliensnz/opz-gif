@@ -7,6 +7,7 @@ const useMounted = (beforeUnmount: () => void = () => {}): (() => boolean) => {
       beforeUnmount();
       isMountedRef.current = false;
     };
+    // eslint-disable-next-line
   }, []);
 
   return () => isMountedRef.current;
