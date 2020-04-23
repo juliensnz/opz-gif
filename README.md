@@ -27,14 +27,15 @@ You can use the project going to https://juliensnz.github.io/opz-gif/
 - prevent user from loosing data [DONE v0.1.2]
 - add a loading indicator [DONE v0.1.3]
 - prevent triggering after modal is dismissed [DONE v0.1.4]
+- loop configuration [DONE v0.2.0]
+- triming/Sampling gifs [DONE v0.2.0]
+- edit mode
+- local storage
+- remove all
+- add giphy support
 - generate from video
 - use jpeg instead of png
-- loop configuration
-- remove all
-- local storage
-- add giphy support
 - managing multiple video packs
-- triming/Sampling gifs
 - support of video formats
 - automatic videopack generation
 - detect if user is offline

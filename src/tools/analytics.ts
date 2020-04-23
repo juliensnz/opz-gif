@@ -47,7 +47,6 @@ const sendError = (type: string, error: Error) => {
 };
 
 const sendEvent = async (type: string, event: any = {}) => {
-  console.log(type, event);
   if ('development' === process.env.NODE_ENV) return;
 
   try {
