@@ -21,6 +21,7 @@ enum UserEvent {
   CloseWtf = 'close_wtf_event',
   OpenLike = 'open_like_event',
   CloseLike = 'close_like_event',
+  ConfigurationChange = 'configuration_change_event',
 }
 
 // Everytime you relaunch the app, I generate a unique id from nothing to identifiy a session.
@@ -46,6 +47,7 @@ const sendError = (type: string, error: Error) => {
 };
 
 const sendEvent = async (type: string, event: any = {}) => {
+  console.log(type, event);
   if ('development' === process.env.NODE_ENV) return;
 
   try {

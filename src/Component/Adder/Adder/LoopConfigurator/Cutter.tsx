@@ -74,7 +74,7 @@ type CutterProps = {
 };
 
 const getTimeLabel = (time: number): string => {
-  const label = (time / 1000).toString().replace('.', '"');
+  const label = (Math.round(time / 10) / 100).toString().replace('.', '"');
 
   return `${label}${label.includes('"') ? '' : '"'}`;
 };
@@ -106,7 +106,7 @@ const Cutter = ({length, start, end, mode, gif, onChange}: CutterProps) => {
   return (
     <Container>
       <Timing>
-        <Start>0</Start>
+        <Start>{getTimeLabel(0)}</Start>
         <Spacer />
         <End>{getTimeLabel(length)}</End>
       </Timing>

@@ -22,7 +22,7 @@ const HandleGrabber = styled.div`
   display: flex;
   flex-direction: column;
   margin-left: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 `;
 const Pin = styled.div`
   background: ${(props) => props.theme.color.grey};
@@ -38,6 +38,12 @@ const Container = styled.div`
   ${Grabber} {
     border-bottom-right-radius: 5px;
     border-bottom-left-radius: 5px;
+  }
+  &:hover {
+    cursor: grab;
+  }
+  &:active {
+    cursor: grabbing;
   }
 `;
 const StartHandle = styled(Container)`
@@ -59,6 +65,8 @@ const EndHandle = styled(Container)`
 `;
 const HandleTime = styled.span`
   margin-left: 3px;
+  position: relative;
+  top: -7px;
 `;
 
 const Handle = ({
@@ -97,12 +105,6 @@ const Handle = ({
       setParentWidth((containerRef.current as any).parentNode.getBoundingClientRect().width);
   }, []);
 
-  useEffect(() => {
-    if (isDragged) window.addEventListener('mouseup', mouseUp);
-
-    return () => window.removeEventListener('mouseup', mouseUp);
-  }, [isDragged, onEnd]);
-
   const mouseUp = useCallback(
     (event: any) => {
       event.preventDefault();
@@ -111,6 +113,12 @@ const Handle = ({
     },
     [onEnd]
   );
+
+  useEffect(() => {
+    if (isDragged) window.addEventListener('mouseup', mouseUp);
+
+    return () => window.removeEventListener('mouseup', mouseUp);
+  }, [isDragged, onEnd, mouseUp]);
 
   const mouseDown = useCallback(
     (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -141,7 +149,7 @@ const Handle = ({
         onChange(newValue);
       }
     },
-    [isDragged, setIsDragged, startingPosition, grabberStartX, length, max, min, onChange, parentWidth]
+    [isDragged, startingPosition, grabberStartX, length, max, min, onChange, parentWidth]
   );
 
   return (

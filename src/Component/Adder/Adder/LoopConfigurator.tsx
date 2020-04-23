@@ -5,6 +5,7 @@ import {Player} from '../../Player';
 import {Back} from '../../Style/Back';
 import {Cutter} from './LoopConfigurator/Cutter';
 import {SampleModeSelector} from './LoopConfigurator/SampleModeSelector';
+import {sendEvent, UserEvent} from '../../../tools/analytics';
 
 const Container = styled.div`
   display: flex;
@@ -47,7 +48,7 @@ const LoopConfigurator = ({
   onLoopConfirmation: (mode: Configuration | null) => void;
 }) => {
   const theme = useContext(ThemeContext);
-  const [configuration, setConfiguration] = useState({start: 0, end: getGifLength(gif), mode: Sample.Trim});
+  const [configuration, setConfiguration] = useState({start: 0, end: getGifLength(gif), mode: Sample.Sample});
   const [tooShort, setTooShort] = useState(false);
 
   useEffect(() => {
@@ -78,6 +79,21 @@ const LoopConfigurator = ({
     [configuration]
   );
 
+  const onCutChange = useCallback(
+    (start: number, end: number) => {
+      setConfiguration({...configuration, start, end});
+    },
+    [configuration]
+  );
+
+  useEffect(() => {
+    if (
+      !(0 === configuration.start && getGifLength(gif) === configuration.end && configuration.mode === Sample.Sample) &&
+      !(0 === configuration.start && 2000 === configuration.end && configuration.mode === Sample.Trim)
+    )
+      sendEvent(UserEvent.ConfigurationChange, configuration);
+  }, [configuration, gif]);
+
   return (
     <Container>
       {gif.length !== 0 && (
@@ -95,9 +111,7 @@ const LoopConfigurator = ({
               end={configuration.end}
               mode={configuration.mode}
               gif={gif}
-              onChange={(start, end) => {
-                setConfiguration({...configuration, start, end});
-              }}
+              onChange={onCutChange}
             />
           </Configurator>
           <Submit
