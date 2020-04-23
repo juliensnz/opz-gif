@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef, useCallback} from 'react';
 import styled from 'styled-components';
 import {getTimeLabel} from './Cutter';
 
-enum Position {
+enum HandlePosition {
   Start,
   End,
 }
@@ -62,7 +62,7 @@ const HandleTime = styled.span`
 `;
 
 const Handle = ({
-  position,
+  handlePosition,
   min,
   max,
   value,
@@ -70,7 +70,7 @@ const Handle = ({
   onChange,
   onEnd,
 }: {
-  position: Position;
+  handlePosition: HandlePosition;
   min: number;
   max: number;
   value: number;
@@ -78,7 +78,7 @@ const Handle = ({
   onChange: (newValue: number) => void;
   onEnd: () => void;
 }) => {
-  const Element = position === Position.Start ? StartHandle : EndHandle;
+  const Element = handlePosition === HandlePosition.Start ? StartHandle : EndHandle;
   const [parentWidth, setParentWidth] = useState<number>(0);
   const [currentPosition, setCurrentPosition] = useState<number>((value / length) * parentWidth);
   useEffect(() => {
@@ -86,6 +86,7 @@ const Handle = ({
   }, [value, parentWidth, length]);
 
   const [grabberStartX, setGrabberStartX] = useState<number>(0);
+  const [startingPosition, setStartingPosition] = useState<number>(0);
   const [isDragged, setIsDragged] = useState<boolean>(false);
 
   const containerRef = useRef(null);
@@ -96,54 +97,59 @@ const Handle = ({
       setParentWidth((containerRef.current as any).parentNode.getBoundingClientRect().width);
   }, []);
 
+  useEffect(() => {
+    if (isDragged) window.addEventListener('mouseup', mouseUp);
+
+    return () => window.removeEventListener('mouseup', mouseUp);
+  }, [isDragged, onEnd]);
+
+  const mouseUp = useCallback(
+    (event: any) => {
+      event.preventDefault();
+      setIsDragged(false);
+      onEnd();
+    },
+    [onEnd]
+  );
+
   const mouseDown = useCallback(
     (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       event.preventDefault();
       setGrabberStartX(event.clientX);
       setIsDragged(true);
+      setStartingPosition(Math.round(currentPosition));
     },
-    [setIsDragged, setGrabberStartX]
+    [setIsDragged, setGrabberStartX, currentPosition]
   );
 
   const mouseMove = useCallback(
     (event) => {
       event.preventDefault();
       if (isDragged) {
-        const newPosition = Math.round(currentPosition - grabberStartX + event.clientX);
+        const newPosition = Math.round(startingPosition + event.clientX - grabberStartX);
         const newValue = Math.round((newPosition / parentWidth) * length);
 
-        if (newValue > max) {
+        if (newValue > max + 1) {
           onChange(max);
-          setIsDragged(false);
           return;
-        } else if (newValue < min) {
+        } else if (newValue < min - 1) {
           onChange(min);
-          setIsDragged(false);
           return;
         }
 
         setCurrentPosition(newPosition);
-        onChange(Math.round((newPosition / parentWidth) * length));
+        onChange(newValue);
       }
     },
-    [isDragged, setIsDragged, currentPosition, grabberStartX, length, max, min, onChange, parentWidth]
-  );
-  const mouseUp = useCallback(
-    (event) => {
-      setIsDragged(false);
-      event.preventDefault();
-      onEnd();
-    },
-    [setIsDragged, onEnd]
+    [isDragged, setIsDragged, startingPosition, grabberStartX, length, max, min, onChange, parentWidth]
   );
 
   return (
     <Element
       ref={containerRef}
-      style={{left: `${position === Position.Start ? currentPosition - 20 : currentPosition - 32}px`}}
+      style={{left: `${handlePosition === HandlePosition.Start ? currentPosition - 20 : currentPosition - 32}px`}}
       onMouseDown={mouseDown}
       onMouseMove={mouseMove}
-      onMouseUp={mouseUp}
     >
       <HandleGrabber>
         <Pin />
@@ -154,4 +160,4 @@ const Handle = ({
   );
 };
 
-export {Handle, Position};
+export {Handle, HandlePosition};

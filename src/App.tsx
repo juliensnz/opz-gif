@@ -93,7 +93,7 @@ const useLoopState = (): [Loop[], (loop: Loop) => void, (loopToRemove: number) =
 };
 
 const App = () => {
-  const [isAddModalOpen, openAddModal, closeAddModal] = useBooleanState(false);
+  const [isAddModalOpen, openAddModal, closeAddModal] = useBooleanState(true);
   const [isInfoModalOpen, openInfoModal, closeInfoModal] = useBooleanState(false);
   const [isLikeModalOpen, openLikeModal, closeLikeModal] = useBooleanState(false);
   const [loops, setLoop, removeLoop] = useLoopState();

@@ -73,12 +73,15 @@ const getFrame = (totalFrames: number, frameNumber: number) => {
   return Math.floor(frameNumber * frameStep);
 };
 
-const getImages = (gif: GIF, frames: number[]): ImageData[] => {
+const getImages = (gif: GIF, configuration: Configuration): ImageData[] => {
+  const trimedGif = filterGif(gif, configuration.start, configuration.end);
+  const frames = getAnimate(configuration)(trimedGif);
+
   return frames.map((key: number) => {
     const canvas = document.createElement('canvas');
     canvas.width = FRAME_WIDTH;
     canvas.height = FRAME_HEIGHT;
-    const imageData = gif[key].data;
+    const imageData = trimedGif[key].data;
     const scale = FRAME_WIDTH / imageData.width;
 
     const context = canvas.getContext('2d');

@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {Sample, GIF, getGifStepLength} from '../../../../tools/gif';
-import {Handle, Position} from './Handle';
+import {Handle, HandlePosition} from './Handle';
 
 const Container = styled.div`
   width: ${(props) => props.theme.addModal.windowSize - props.theme.addModal.spacing * 3}px;
@@ -73,7 +73,11 @@ type CutterProps = {
   onChange: (start: number, end: number) => void;
 };
 
-const getTimeLabel = (time: number): string => `${(time / 1000).toString().replace('.', '"')}`;
+const getTimeLabel = (time: number): string => {
+  const label = (time / 1000).toString().replace('.', '"');
+
+  return `${label}${label.includes('"') ? '' : '"'}`;
+};
 
 const Cutter = ({length, start, end, mode, gif, onChange}: CutterProps) => {
   const [state, setState] = useState({start, end});
@@ -83,7 +87,6 @@ const Cutter = ({length, start, end, mode, gif, onChange}: CutterProps) => {
 
   const onStartChange = useCallback(
     (newStart: number) => {
-      console.log(mode);
       Sample.Sample === mode
         ? setState({...state, start: newStart})
         : setState({start: newStart, end: newStart + 2000});
@@ -115,7 +118,7 @@ const Cutter = ({length, start, end, mode, gif, onChange}: CutterProps) => {
       <CutBoard>
         <Handle
           value={state.start}
-          position={Position.Start}
+          handlePosition={HandlePosition.Start}
           min={0}
           max={Sample.Sample === mode ? state.end - getGifStepLength(gif) * 3 : length - 2000}
           length={length}
@@ -124,7 +127,7 @@ const Cutter = ({length, start, end, mode, gif, onChange}: CutterProps) => {
         />
         <Handle
           value={state.end}
-          position={Position.End}
+          handlePosition={HandlePosition.End}
           min={Sample.Sample === mode ? state.start + getGifStepLength(gif) * 3 : 2000}
           max={length}
           length={length}
