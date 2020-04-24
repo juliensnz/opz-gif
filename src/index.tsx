@@ -10,7 +10,7 @@ import {ErrorBoundary} from './Component/Error';
 const theme = {
   addModal: {
     windowSize: 600,
-    sourceCount: 2,
+    sourceCount: 3,
     spacing: 60,
   },
   color: {

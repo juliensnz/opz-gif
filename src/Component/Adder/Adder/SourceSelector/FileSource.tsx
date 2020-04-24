@@ -7,13 +7,12 @@ import {sendEvent, UserEvent, sendError} from '../../../../tools/analytics';
 import {LoadingContext} from '../../../../context/loading';
 import {useMounted} from '../../../../hooks/mounted';
 
-const WINDOW_SIZE = 600;
 const Container = styled.div<{selected: boolean; previous: boolean}>`
   background-color: ${(props) => props.theme.color.blue};
-  width: ${WINDOW_SIZE}px;
+  width: ${(props) => props.theme.addModal.windowSize}px;
   height: ${(props) =>
     props.selected
-      ? props.theme.addModal.windowSize - (props.previous ? 0 : props.theme.addModal.spacing)
+      ? props.theme.addModal.windowSize - (props.previous ? 0 : props.theme.addModal.spacing * 2)
       : props.theme.addModal.windowSize / props.theme.addModal.sourceCount}px;
   transition: height 0.5s ease-in-out;
   position: relative;
@@ -51,7 +50,7 @@ const Explanation = styled.div`
   top: 0;
   left: 0;
   width: calc(100% - ${(props) => props.theme.addModal.spacing * 2}px);
-  height: calc(100% - ${(props) => props.theme.addModal.spacing * 2}px);
+  height: calc(100%);
   background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='10' ry='10' stroke='%23E9B13DFF' stroke-width='4' stroke-dasharray='6%2c 14' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
   border-radius: 10px;
   margin: 0 ${(props) => props.theme.addModal.spacing}px;
@@ -147,6 +146,11 @@ const FileSource = ({
 
         <Input type="file" onChange={submit} />
       </DropZone>
+      {null !== selected && Source.File !== selected && (
+        <Back vertical={false} leading={false} onClick={() => onSelected()}>
+          Back
+        </Back>
+      )}
 
       {previous && (
         <Back vertical={true} onClick={() => onGifSelected([])}>
