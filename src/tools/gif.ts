@@ -1,13 +1,16 @@
 import SuperGif from 'libgif';
 
 export enum Sample {
-  Trim,
-  Sample,
+  Trim = 'trim',
+  Sample = 'sample',
 }
 
-export type GIF = {data: ImageData; delay: number}[];
+export type Frame = {data: ImageData; delay: number};
+export type GIF = Frame[];
 export type Configuration = {
-  sample: Sample;
+  mode: Sample;
+  start: number;
+  end: number;
 };
 
 const blockedProviders = ['media.gifs.nl'];
@@ -34,6 +37,9 @@ const getImage = async (url: string): Promise<HTMLImageElement> => {
     image.src = url;
   });
 };
+
+const getGifLength = (gif: GIF) => (0 === gif.length ? 0 : gif.length * gif[0].delay * 10);
+const getGifStepLength = (gif: GIF) => (0 === gif.length ? 0 : gif[0].delay * 10);
 
 const getDataUrl = async (url: string): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -91,4 +97,4 @@ const getGif = async (urlData: string): Promise<GIF> => {
   return (await getSuperGif(image)).get_frames();
 };
 
-export {getGif, getImage, getBase64, getDataUrl};
+export {getGif, getImage, getBase64, getDataUrl, getGifLength, getGifStepLength};

@@ -1,5 +1,5 @@
 import JSZip from 'jszip';
-import {generateSprite, getTrimedFrames, getImages} from './canvas';
+import {generateSprite, getImages} from './canvas';
 import {Loop} from '../model/loop';
 
 const generateZip = (loops: Loop[]): Promise<Blob> => {
@@ -7,7 +7,7 @@ const generateZip = (loops: Loop[]): Promise<Blob> => {
     const zip = new JSZip();
     const folder = zip.folder('GIFs');
     for (const loop of loops) {
-      const sprite = await generateSprite(getImages(loop.gif, getTrimedFrames(loop.gif)));
+      const sprite = await generateSprite(getImages(loop.gif, loop.configuration));
       if ('' === sprite) return;
 
       folder.file(

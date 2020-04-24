@@ -1,15 +1,7 @@
 import React, {ChangeEvent, useRef, useState, useEffect} from 'react';
 import styled from 'styled-components';
 import {getGif, getBase64, GIF, getImage, getDataUrl} from '../tools/gif';
-import {
-  scaleImage,
-  animateTrimed,
-  generateSprite,
-  getImages,
-  getTrimedFrames,
-  FRAME_WIDTH,
-  FRAME_HEIGHT,
-} from '../tools/canvas';
+import {FRAME_WIDTH, FRAME_HEIGHT} from '../tools/canvas';
 import {Url} from './Url';
 
 const Canvas = styled.canvas`
@@ -116,16 +108,16 @@ const Container = styled.div`
 const Player = ({gif}: {gif: GIF}) => {
   const canvasRef = useRef(null);
 
-  useEffect(() => {
-    if (null !== canvasRef && null !== canvasRef.current) {
-      scaleImage(canvasRef.current as any, gif);
-      const timer = animateTrimed(canvasRef.current as any, gif);
+  // useEffect(() => {
+  //   if (null !== canvasRef && null !== canvasRef.current) {
+  //     scaleImage(canvasRef.current as any, gif);
+  //     const timer = animateTrimed(canvasRef.current as any, gif);
 
-      return () => {
-        clearInterval(timer);
-      };
-    }
-  }, [gif]);
+  //     return () => {
+  //       clearInterval(timer);
+  //     };
+  //   }
+  // }, [gif]);
 
   return <Canvas ref={canvasRef} width={FRAME_WIDTH} height={FRAME_HEIGHT}></Canvas>;
 };
@@ -135,11 +127,11 @@ const Loader = ({onSpriteUpdate, index}: {onSpriteUpdate: (sprite: string) => vo
   const [isLoading, setLoading] = useState<boolean>(false);
   const [urlOpen, setUrlOpen] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (0 === gif.length) return;
+  // useEffect(() => {
+  //   if (0 === gif.length) return;
 
-    generateSprite(getImages(gif, getTrimedFrames(gif))).then(onSpriteUpdate);
-  }, [gif]);
+  //   generateSprite(getImages(gif, getTrimedFrames(gif))).then(onSpriteUpdate);
+  // }, [gif]);
 
   return (
     <Container>

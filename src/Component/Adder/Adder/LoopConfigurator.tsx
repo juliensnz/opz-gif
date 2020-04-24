@@ -1,8 +1,11 @@
-import React from 'react';
-import styled from 'styled-components';
-import {GIF, Sample, Configuration} from '../../../tools/gif';
+import React, {useContext, useState, useEffect, useCallback} from 'react';
+import styled, {ThemeContext} from 'styled-components';
+import {GIF, Sample, Configuration, getGifLength} from '../../../tools/gif';
 import {Player} from '../../Player';
 import {Back} from '../../Style/Back';
+import {Cutter} from './LoopConfigurator/Cutter';
+import {SampleModeSelector} from './LoopConfigurator/SampleModeSelector';
+import {sendEvent, UserEvent} from '../../../tools/analytics';
 
 const Container = styled.div`
   display: flex;
@@ -30,6 +33,11 @@ const Submit = styled.span`
   }
 `;
 
+const Configurator = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 const LoopConfigurator = ({
   gif,
   onLoopConfirmation,
@@ -37,16 +45,78 @@ const LoopConfigurator = ({
 }: {
   gif: GIF;
   previous: boolean;
-  onLoopConfirmation: (loop: Configuration | null) => void;
+  onLoopConfirmation: (mode: Configuration | null) => void;
 }) => {
+  const theme = useContext(ThemeContext);
+  const [configuration, setConfiguration] = useState({start: 0, end: getGifLength(gif), mode: Sample.Sample});
+  const [tooShort, setTooShort] = useState(false);
+
+  useEffect(() => {
+    if (2000 > getGifLength(gif)) {
+      setConfiguration({start: 0, end: getGifLength(gif), mode: Sample.Sample});
+      setTooShort(true);
+    } else {
+      setConfiguration({start: 0, end: 2000, mode: Sample.Trim});
+      setTooShort(false);
+    }
+  }, [gif]);
+
+  const onModeChange = useCallback(
+    (newMode: Sample) => {
+      const newStartEnd =
+        newMode === Sample.Trim
+          ? {
+              start: newMode === Sample.Trim ? 0 : configuration.start,
+              end: newMode === Sample.Trim ? 2000 : configuration.end,
+            }
+          : {};
+      setConfiguration({
+        ...configuration,
+        mode: newMode,
+        ...newStartEnd,
+      });
+    },
+    [configuration]
+  );
+
+  const onCutChange = useCallback(
+    (start: number, end: number) => {
+      setConfiguration({...configuration, start, end});
+    },
+    [configuration]
+  );
+
+  useEffect(() => {
+    if (
+      !(0 === configuration.start && getGifLength(gif) === configuration.end && configuration.mode === Sample.Sample) &&
+      !(0 === configuration.start && 2000 === configuration.end && configuration.mode === Sample.Trim)
+    )
+      sendEvent(UserEvent.ConfigurationChange, configuration);
+  }, [configuration, gif]);
+
   return (
     <Container>
       {gif.length !== 0 && (
         <>
-          <Player gif={gif} width={420} />
+          <Configurator>
+            <Player
+              gif={gif}
+              configuration={configuration}
+              width={theme.addModal.windowSize - theme.addModal.spacing * 3}
+            />
+            {!tooShort && <SampleModeSelector mode={configuration.mode} onChange={onModeChange} />}
+            <Cutter
+              length={getGifLength(gif)}
+              start={configuration.start}
+              end={configuration.end}
+              mode={configuration.mode}
+              gif={gif}
+              onChange={onCutChange}
+            />
+          </Configurator>
           <Submit
             onClick={() => {
-              onLoopConfirmation({sample: Sample.Trim});
+              onLoopConfirmation(configuration);
             }}
           >
             Confirm
