@@ -36,7 +36,7 @@ const getAnimate = (configuration: Configuration) =>
   configuration.mode === Sample.Trim ? getTrimedFrames : getSampledFrames;
 
 const getTrimedFrames = (gif: GIF) => {
-  const frameCount = Math.floor(ANIMATION_LENGTH / (getFrameLength(gif) * 10));
+  const frameCount = Math.floor(ANIMATION_LENGTH / getFrameLength(gif));
 
   return [...new Array(30)].map((_value: any, index: number) =>
     getFrame(frameCount >= gif.length ? gif.length : frameCount, index)
