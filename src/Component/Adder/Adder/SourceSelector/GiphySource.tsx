@@ -1,4 +1,13 @@
-import React, {ChangeEvent, useContext, useCallback, useState, useRef, useEffect, KeyboardEvent} from 'react';
+import React, {
+  ChangeEvent,
+  useContext,
+  useCallback,
+  useState,
+  useRef,
+  useEffect,
+  KeyboardEvent,
+  SyntheticEvent,
+} from 'react';
 import styled from 'styled-components';
 import {GIF, getGif, getDataUrl} from '../../../../tools/gif';
 import {Back} from '../../../Style/Back';
@@ -97,6 +106,19 @@ const Submit = styled.span`
   }
 `;
 
+const PoweredContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 60px 0;
+`;
+
+const PoweredLogo = styled.img`
+  width: 200px;
+`;
+
 const GiphySource = ({
   selected,
   previous,
@@ -192,18 +214,22 @@ const GiphySource = ({
           <Submit onClick={doSearch}>Search</Submit>
           {null !== error && <ErrorDisplay>{error}</ErrorDisplay>}
         </Form>
-        {'' !== search && search === currentSearch && (
+        {'' !== search && search === currentSearch ? (
           <Grid
             width={480}
             columns={3}
             fetchGifs={fetchGifs}
             hideAttribution={true}
-            onGifClick={(gif: any, event: MouseEvent) => {
+            onGifClick={(gif: any, event: SyntheticEvent<HTMLElement, Event>) => {
               submit(gif.images.original.url);
               event.preventDefault();
               return false;
             }}
           />
+        ) : (
+          <PoweredContainer>
+            <PoweredLogo src="./PoweredByGiphy.png" />
+          </PoweredContainer>
         )}
       </SelectionZone>
 
