@@ -38,6 +38,14 @@ const Configurator = styled.div`
   flex-direction: column;
 `;
 
+const MIN_GIF_SIZE = 3;
+
+enum Size {
+  Short = 'short',
+  Medium = 'medium',
+  Long = 'long',
+}
+
 const LoopConfigurator = ({
   gif,
   onLoopConfirmation,
@@ -49,15 +57,18 @@ const LoopConfigurator = ({
 }) => {
   const theme = useContext(ThemeContext);
   const [configuration, setConfiguration] = useState({start: 0, end: getGifLength(gif), mode: Sample.Sample});
-  const [tooShort, setTooShort] = useState(false);
+  const [size, setSize] = useState<Size>(Size.Long);
 
   useEffect(() => {
-    if (2000 > getGifLength(gif)) {
+    if (MIN_GIF_SIZE >= gif.length) {
       setConfiguration({start: 0, end: getGifLength(gif), mode: Sample.Sample});
-      setTooShort(true);
+      setSize(Size.Short);
+    } else if (2000 >= getGifLength(gif)) {
+      setConfiguration({start: 0, end: getGifLength(gif), mode: Sample.Sample});
+      setSize(Size.Medium);
     } else {
       setConfiguration({start: 0, end: 2000, mode: Sample.Trim});
-      setTooShort(false);
+      setSize(Size.Long);
     }
   }, [gif]);
 
@@ -102,17 +113,19 @@ const LoopConfigurator = ({
             <Player
               gif={gif}
               configuration={configuration}
-              width={theme.addModal.windowSize - theme.addModal.spacing * 3}
+              width={theme.addModal.windowSize - theme.addModal.spacing * MIN_GIF_SIZE}
             />
-            {!tooShort && <SampleModeSelector mode={configuration.mode} onChange={onModeChange} />}
-            <Cutter
-              length={getGifLength(gif)}
-              start={configuration.start}
-              end={configuration.end}
-              mode={configuration.mode}
-              gif={gif}
-              onChange={onCutChange}
-            />
+            {Size.Long === size && <SampleModeSelector mode={configuration.mode} onChange={onModeChange} />}
+            {Size.Short !== size && (
+              <Cutter
+                length={getGifLength(gif)}
+                start={configuration.start}
+                end={configuration.end}
+                mode={configuration.mode}
+                gif={gif}
+                onChange={onCutChange}
+              />
+            )}
           </Configurator>
           <Submit
             onClick={() => {

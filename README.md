@@ -29,10 +29,12 @@ You can use the project going to https://juliensnz.github.io/opz-gif/
 - prevent triggering after modal is dismissed [DONE v0.1.4]
 - loop configuration [DONE v0.2.0]
 - triming/Sampling gifs [DONE v0.2.0]
+- add giphy support [DONE v0.3.0]
+- handle weird gifs size [DONE v0.3.0]
+- add loop feature
 - edit mode
 - local storage
 - remove all
-- add giphy support
 - generate from video
 - use jpeg instead of png
 - managing multiple video packs

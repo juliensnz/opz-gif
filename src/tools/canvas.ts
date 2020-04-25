@@ -1,16 +1,27 @@
-import {GIF, Sample, Configuration, Frame} from './gif';
+import {GIF, Sample, Configuration, Frame, getFrameLength} from './gif';
 
 const FRAME_WIDTH = 1014;
 const FRAME_HEIGHT = 468;
 const ANIMATION_LENGTH = 2000;
+const FRAME_RATIO = FRAME_WIDTH / FRAME_HEIGHT;
+
+const isTooWide = (imageData: ImageData) => imageData.width / imageData.height > FRAME_RATIO;
 
 const addImageToCanvas = (context: CanvasRenderingContext2D, imageData: ImageData) => {
-  const croppedWidth = imageData.width;
-  const croppedHeight = (imageData.width / FRAME_WIDTH) * FRAME_HEIGHT;
-  const left = 0;
-  const top = (imageData.height - croppedHeight) / 2;
+  if (!isTooWide(imageData)) {
+    const croppedWidth = imageData.width;
+    const croppedHeight = (imageData.width / FRAME_WIDTH) * FRAME_HEIGHT;
+    const left = 0;
+    const top = (imageData.height - croppedHeight) / 2;
 
-  context.putImageData(imageData, 0, -top, left, top, croppedWidth, croppedHeight);
+    context.putImageData(imageData, 0, -top, left, top, croppedWidth, croppedHeight);
+  } else {
+    const croppedWidth = (imageData.height / FRAME_HEIGHT) * FRAME_WIDTH;
+    const croppedHeight = imageData.height;
+    const left = (imageData.width - croppedWidth) / 2;
+    const top = 0;
+    context.putImageData(imageData, -left, 0, left, top, croppedWidth, croppedHeight);
+  }
 };
 
 const drawImage = (canvas: HTMLCanvasElement, imageData: ImageData) => {
@@ -25,7 +36,7 @@ const getAnimate = (configuration: Configuration) =>
   configuration.mode === Sample.Trim ? getTrimedFrames : getSampledFrames;
 
 const getTrimedFrames = (gif: GIF) => {
-  const frameCount = Math.floor(ANIMATION_LENGTH / (gif[0].delay * 10));
+  const frameCount = Math.floor(ANIMATION_LENGTH / (getFrameLength(gif) * 10));
 
   return [...new Array(30)].map((_value: any, index: number) =>
     getFrame(frameCount >= gif.length ? gif.length : frameCount, index)
@@ -58,7 +69,8 @@ const animate = (canvas: HTMLCanvasElement, gif: GIF, configuration: Configurati
 };
 
 const scaleImage = (canvas: HTMLCanvasElement, gif: GIF) => {
-  const scale = FRAME_WIDTH / gif[0].data.width;
+  const firstFrame = gif[0].data;
+  const scale = !isTooWide(firstFrame) ? FRAME_WIDTH / firstFrame.width : FRAME_HEIGHT / firstFrame.height;
 
   (canvas.getContext('2d') as any).scale(scale, scale);
 };
@@ -121,6 +133,7 @@ export {
   generateSprite,
   getImages,
   clearCanvas,
+  isTooWide,
   FRAME_WIDTH,
   FRAME_HEIGHT,
 };
