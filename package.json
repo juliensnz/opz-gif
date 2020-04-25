@@ -19,7 +19,8 @@
     "start": "REACT_APP_VERSION=$(node -pe 'require(\"./package.json\").version') react-scripts start",
     "build": "REACT_APP_VERSION=$(node -pe 'require(\"./package.json\").version') react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "package": "npm run build && mv build opz-gif && tar -zcvf opz-gif.tar.gz opz-gif && rm -rf opz-gif"
   },
   "eslintConfig": {
     "extends": "react-app"
