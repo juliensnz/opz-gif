@@ -30,8 +30,8 @@ You can use the project going to https://juliensnz.github.io/opz-gif/
 - loop configuration [DONE v0.2.0]
 - triming/Sampling gifs [DONE v0.2.0]
 - add giphy support [DONE v0.3.0]
+- handle weird gifs size [DONE v0.3.0]
 - add loop feature
-- handle weird size gifs
 - edit mode
 - local storage
 - remove all
