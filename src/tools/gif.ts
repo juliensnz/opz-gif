@@ -38,8 +38,17 @@ const getImage = async (url: string): Promise<HTMLImageElement> => {
   });
 };
 
-const getGifLength = (gif: GIF) => (0 === gif.length ? 0 : gif.length * gif[0].delay * 10);
-const getGifStepLength = (gif: GIF) => (0 === gif.length ? 0 : gif[0].delay * 10);
+const getGifLength = (gif: GIF): number => {
+  if (0 === gif.length) return 0;
+
+  return gif.reduce((result, frame) => result + frame.delay, 0) * 10;
+};
+
+const getFrameLength = (gif: GIF): number => {
+  if (0 === gif.length) return 0;
+
+  return getGifLength(gif) / gif.length;
+};
 
 const getDataUrl = async (url: string): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -94,7 +103,9 @@ const getGif = async (urlData: string): Promise<GIF> => {
   const parent = document.createElement('div');
   parent.appendChild(image);
 
-  return (await getSuperGif(image)).get_frames();
+  const gif = (await getSuperGif(image)).get_frames();
+
+  return gif.map((frame: Frame) => (frame.delay === null ? {...frame, delay: 0} : frame));
 };
 
-export {getGif, getImage, getBase64, getDataUrl, getGifLength, getGifStepLength};
+export {getGif, getImage, getBase64, getDataUrl, getGifLength, getFrameLength};

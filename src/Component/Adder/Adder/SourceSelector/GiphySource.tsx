@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useContext, useCallback, useState, useRef, useEffect, KeyboardEvent} from 'react';
 import styled from 'styled-components';
-import {GIF, getBase64, getGif, getDataUrl} from '../../../../tools/gif';
+import {GIF, getGif, getDataUrl} from '../../../../tools/gif';
 import {Back} from '../../../Style/Back';
 import {Source} from '../SourceSelector';
 import {sendEvent, UserEvent, sendError} from '../../../../tools/analytics';

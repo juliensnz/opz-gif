@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import styled from 'styled-components';
-import {Sample, GIF, getGifStepLength} from '../../../../tools/gif';
+import {Sample, GIF, getFrameLength} from '../../../../tools/gif';
 import {Handle, HandlePosition} from './Handle';
 
 const Container = styled.div`
@@ -120,7 +120,7 @@ const Cutter = ({length, start, end, mode, gif, onChange}: CutterProps) => {
           value={state.start}
           handlePosition={HandlePosition.Start}
           min={0}
-          max={Sample.Sample === mode ? state.end - getGifStepLength(gif) * 3 : length - 2000}
+          max={Sample.Sample === mode ? state.end - getFrameLength(gif) * 3 : length - 2000}
           length={length}
           onChange={onStartChange}
           onEnd={onEnd}
@@ -128,7 +128,7 @@ const Cutter = ({length, start, end, mode, gif, onChange}: CutterProps) => {
         <Handle
           value={state.end}
           handlePosition={HandlePosition.End}
-          min={Sample.Sample === mode ? state.start + getGifStepLength(gif) * 3 : 2000}
+          min={Sample.Sample === mode ? state.start + getFrameLength(gif) * 3 : 2000}
           max={length}
           length={length}
           onChange={onEndChange}
