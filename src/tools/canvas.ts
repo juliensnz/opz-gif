@@ -29,7 +29,6 @@ const drawImage = (canvas: HTMLCanvasElement, imageData: ImageData) => {
   if (null === context) return;
 
   addImageToCanvas(context, imageData);
-  context.drawImage(canvas, 0, 0, FRAME_WIDTH, FRAME_HEIGHT);
 };
 
 const getAnimate = (configuration: Configuration) =>
@@ -62,7 +61,7 @@ const animate = (canvas: HTMLCanvasElement, gif: GIF, configuration: Configurati
   const frames = getAnimate(configuration)(trimedGif);
 
   return setInterval(() => {
-    const imageData = trimedGif[frames[cpt % 30]].data;
+    const imageData = getCroppedImageData(trimedGif[frames[cpt % 30]].data);
     drawImage(canvas, imageData);
     cpt++;
   }, ANIMATION_LENGTH / 30);
@@ -85,25 +84,32 @@ const getFrame = (totalFrames: number, frameNumber: number) => {
   return Math.floor(frameNumber * frameStep);
 };
 
+const getCroppedImageData = (imageData: ImageData) => {
+  const scaledCanvas = document.createElement('canvas');
+  scaledCanvas.width = FRAME_WIDTH;
+  scaledCanvas.height = FRAME_HEIGHT;
+  const scaledContext = scaledCanvas.getContext('2d');
+  if (null === scaledContext) throw Error('Cannot get scaled context');
+
+  const canvas = document.createElement('canvas');
+  canvas.width = imageData.width;
+  canvas.height = imageData.width;
+  const scale = FRAME_WIDTH / imageData.width;
+  const context = canvas.getContext('2d');
+  if (null === context) throw Error('Cannot get context');
+  addImageToCanvas(context, imageData);
+
+  scaledContext.scale(scale, scale);
+  scaledContext.drawImage(canvas, 0, 0);
+
+  return scaledContext.getImageData(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
+};
+
 const getImages = (gif: GIF, configuration: Configuration): ImageData[] => {
   const trimedGif = filterGif(gif, configuration.start, configuration.end);
   const frames = getAnimate(configuration)(trimedGif);
 
-  return frames.map((key: number) => {
-    const canvas = document.createElement('canvas');
-    canvas.width = FRAME_WIDTH;
-    canvas.height = FRAME_HEIGHT;
-    const imageData = trimedGif[key].data;
-    const scale = FRAME_WIDTH / imageData.width;
-
-    const context = canvas.getContext('2d');
-    if (null === context) throw Error('Cannot get context');
-    addImageToCanvas(context, imageData);
-    context.scale(scale, scale);
-    context.drawImage(canvas, 0, 0);
-
-    return context.getImageData(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
-  });
+  return frames.map((key: number) => getCroppedImageData(trimedGif[key].data));
 };
 
 const getOffsetX = (index: number): number => 5 + (FRAME_WIDTH + 10) * (index % 4);

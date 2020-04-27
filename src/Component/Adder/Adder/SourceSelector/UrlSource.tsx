@@ -29,6 +29,7 @@ const Button = styled.div`
   justify-content: center;
   font-size: 30px;
   font-weight: 200;
+  color: white;
 
   &:hover {
     cursor: pointer;

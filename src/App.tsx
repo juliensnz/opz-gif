@@ -2,7 +2,7 @@ import React, {useState, useCallback} from 'react';
 import styled from 'styled-components';
 import {useBooleanState} from './hooks/boolean';
 import {Adder} from './Component/Adder/Adder';
-import {Loop} from './model/loop';
+import {Loop, getLoop, EmptyLoop, createEmptyLoop, createLoopFromSprite, isLoop} from './model/loop';
 import {saveAs} from 'file-saver';
 import {generateZip} from './tools/zip';
 import {Loops} from './Component/Loops';
@@ -11,6 +11,8 @@ import {Wtf} from './Component/Wtf';
 import {Like} from './Component/Like';
 import {useBeforeLeave} from './hooks/leave';
 import {LoadingContext} from './context/loading';
+import {getGifLength} from './tools/gif';
+import {useLoopState} from './hooks/loop';
 
 const Container = styled.div`
   display: flex;
@@ -76,35 +78,12 @@ const DownloadButton = styled.div`
   }
 `;
 
-const useLoopState = (): [Loop[], (loop: Loop) => void, (loopToRemove: number) => void] => {
-  const [loops, setLoops] = useState<Loop[]>([]);
-
-  const setLoop = useCallback(
-    (newLoop: Loop) => {
-      const updatedLoops = [...loops].filter((loop) => loop.sprite !== newLoop.sprite);
-
-      setLoops([...updatedLoops, newLoop]);
-    },
-    [loops, setLoops]
-  );
-  const removeLoop = useCallback(
-    (loopToRemove: number) => {
-      const updatedLoops = [...loops].filter((loop) => loop.sprite !== loopToRemove);
-
-      setLoops(updatedLoops);
-    },
-    [loops, setLoops]
-  );
-
-  return [loops, setLoop, removeLoop];
-};
-
 const App = () => {
   const [isAddModalOpen, openAddModal, closeAddModal] = useBooleanState(false);
   const [isInfoModalOpen, openInfoModal, closeInfoModal] = useBooleanState(false);
   const [isLikeModalOpen, openLikeModal, closeLikeModal] = useBooleanState(false);
   const [loops, setLoop, removeLoop] = useLoopState();
-  const [currentSprite, setSprite] = useState<number | null>(null);
+  const [currentLoop, setCurrentLoop] = useState<Loop | EmptyLoop>(createEmptyLoop());
   useBeforeLeave(useCallback(() => loops.length === 0 || isLikeModalOpen, [loops, isLikeModalOpen]));
 
   return (
@@ -123,13 +102,28 @@ const App = () => {
             sendEvent(UserEvent.LoopRemoved);
             removeLoop(sprite);
           }}
+          onEditLoop={(sprite: number) => {
+            const loop = getLoop(loops, sprite) as Loop;
+            if (undefined === loop) {
+              sendError('cannot_find_loop', new Error(`Loop ${sprite} not found`));
+            }
+
+            sendEvent(UserEvent.StartEditing, {
+              sprite,
+              frameCount: loop.gif.length,
+              gifLength: getGifLength(loop.gif),
+              configuration: loop.configuration,
+            });
+            setCurrentLoop(loop);
+            openAddModal();
+          }}
           onOpenLikeLoop={() => {
             sendEvent(UserEvent.OpenLike);
             openLikeModal();
           }}
           onOpenAddLoop={(sprite: number) => {
             sendEvent(UserEvent.StartAdding, {loop_number: sprite, from: 'loop'});
-            setSprite(sprite);
+            setCurrentLoop(createLoopFromSprite(sprite));
             openAddModal();
           }}
         />
@@ -163,23 +157,32 @@ const App = () => {
           <Adder
             dismissModal={() => closeAddModal()}
             onLoopAdd={(loop: Loop) => {
-              if (currentSprite === null) {
+              if (currentLoop.sprite === null) {
                 sendEvent(UserEvent.LoopAdded, {
                   loop_count: loops.length,
                   from: 'button',
+                  configuration: loop.configuration,
+                });
+              } else if (isLoop(currentLoop)) {
+                sendEvent(UserEvent.LoopEdited, {
+                  loop_count: loops.length,
+                  from: 'sprite',
+                  loop: currentLoop.sprite,
+                  configuration: loop.configuration,
                 });
               } else {
                 sendEvent(UserEvent.LoopAdded, {
                   loop_count: loops.length,
                   from: 'sprite',
-                  loop: currentSprite,
+                  loop: currentLoop.sprite,
+                  configuration: loop.configuration,
                 });
               }
               closeAddModal();
               setLoop(loop);
-              setSprite(null);
+              setCurrentLoop(createEmptyLoop());
             }}
-            initialSprite={currentSprite}
+            initialLoop={currentLoop}
           />
         )}
         {isInfoModalOpen && (

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import {SourceSelector} from './Adder/SourceSelector';
 import {LoopConfigurator} from './Adder/LoopConfigurator';
 import {SpriteSelector} from './Adder/SpriteSelector';
-import {Loop} from '../../model/loop';
+import {Loop, EmptyLoop, isLoop} from '../../model/loop';
 import {useBooleanState} from '../../hooks/boolean';
 import {sendEvent, UserEvent} from '../../tools/analytics';
 import {Container, Modal, Header, Dismiss, Title, Mask} from '../Modal';
@@ -24,29 +24,26 @@ const Scroller = styled.div<{level: number}>`
   transition: transform 0.5s ease-in-out;
 `;
 
-const getLevel = (gif: GIF, configuration: Configuration | null): number => {
-  if (null !== configuration) {
-    return 2;
-  }
-  if (0 !== gif.length) {
-    return 1;
-  }
+const getLevel = (loop: Loop | EmptyLoop, isEdit: boolean): number => {
+  if (isEdit) return 0;
+  if (null !== loop.configuration) return 2;
+  if (0 !== loop.gif.length) return 1;
 
   return 0;
 };
 
 const Adder = ({
-  initialSprite = null,
+  initialLoop,
   onLoopAdd,
   dismissModal,
 }: {
-  initialSprite?: number | null;
+  initialLoop: Loop | EmptyLoop;
   onLoopAdd: (loop: Loop) => void;
   dismissModal: () => void;
 }) => {
-  const [gif, setGif] = useState<GIF>([]);
-  const [configuration, setConfiguration] = useState<Configuration | null>(null);
-  const [sprite, setSprite] = useState<number | null>(initialSprite);
+  const isEdit = isLoop(initialLoop);
+  const [isConfirmed, setComfirmed] = useState(!isEdit);
+  const [loop, setLoop] = useState<Loop | EmptyLoop>(initialLoop);
   const [isVisible, show] = useBooleanState(false);
   const [loading] = useContext(LoadingContext);
 
@@ -56,26 +53,22 @@ const Adder = ({
   }, []);
 
   useEffect(() => {
-    if (0 !== gif.length && null !== configuration && null !== sprite) {
-      onLoopAdd({
-        gif,
-        configuration,
-        sprite,
-      });
+    if (isLoop(loop) && isConfirmed) {
+      onLoopAdd(loop);
     }
-  }, [gif, configuration, sprite, onLoopAdd]);
+  }, [loop, onLoopAdd, isConfirmed]);
 
   const dismiss = useCallback(() => {
-    if (null !== configuration) {
+    if (null !== loop.configuration) {
       sendEvent(UserEvent.CancelAdd, {from: 'sprite'});
-    } else if (0 !== gif.length) {
+    } else if (0 !== loop.gif.length) {
       sendEvent(UserEvent.CancelAdd, {from: 'configure'});
     } else {
       sendEvent(UserEvent.CancelAdd, {from: 'start'});
     }
 
     dismissModal();
-  }, [dismissModal, configuration, gif]);
+  }, [dismissModal, loop]);
 
   useShortcut(Key.Escape, dismiss);
 
@@ -85,26 +78,30 @@ const Adder = ({
       <Modal>
         <Header>
           <Dismiss onClick={dismiss}>X</Dismiss>
-          <Title>Add a loop</Title>
+          <Title>{`${isEdit ? 'Edit' : 'Add'} a loop`}</Title>
           <Loading isLoading={loading} />
         </Header>
-        <Scroller level={getLevel(gif, configuration)}>
-          <SourceSelector
-            previous={0 !== gif.length}
-            onGifSelected={(newGif: GIF) => {
-              setGif(newGif);
-            }}
-          />
+        <Scroller level={getLevel(loop, isEdit)}>
+          {!isEdit && (
+            <SourceSelector
+              previous={0 !== loop.gif.length}
+              onGifSelected={(gif: GIF) => {
+                setLoop({...loop, gif});
+              }}
+            />
+          )}
           <LoopConfigurator
-            previous={null !== configuration}
-            gif={gif}
-            onLoopConfirmation={(configuration) => {
-              setConfiguration(configuration);
+            isEdit={isEdit}
+            gif={loop.gif}
+            initialConfiguration={loop.configuration}
+            onLoopConfirmation={(configuration: Configuration | null) => {
+              setLoop({...loop, configuration});
+              setComfirmed(true);
             }}
           />
           <SpriteSelector
             onSpriteConfirmation={(sprite: number) => {
-              setSprite(sprite);
+              setLoop({...loop, sprite});
             }}
           />
         </Scroller>

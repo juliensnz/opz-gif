@@ -46,6 +46,7 @@ const Button = styled.div<{selected: boolean}>`
   font-size: 30px;
   font-weight: 200;
   flex-shrink: 0;
+  color: white;
 
   &:hover {
     cursor: pointer;

@@ -1,7 +1,7 @@
 import React, {useRef, useEffect} from 'react';
 import styled from 'styled-components';
 import {GIF, Configuration} from '../tools/gif';
-import {scaleImage, FRAME_WIDTH, FRAME_HEIGHT, animate} from '../tools/canvas';
+import {FRAME_WIDTH, FRAME_HEIGHT, animate} from '../tools/canvas';
 
 const Canvas = styled.canvas<{cssWidth: number}>`
   width: ${(props) => props.cssWidth}px;
@@ -10,12 +10,6 @@ const Canvas = styled.canvas<{cssWidth: number}>`
 
 const Player = ({gif, width, configuration}: {gif: GIF; width: number; configuration: Configuration}) => {
   const canvasRef = useRef(null);
-
-  useEffect(() => {
-    if (null !== canvasRef && null !== canvasRef.current) {
-      scaleImage(canvasRef.current as any, gif);
-    }
-  }, [gif]);
 
   useEffect(() => {
     if (null !== canvasRef && null !== canvasRef.current) {

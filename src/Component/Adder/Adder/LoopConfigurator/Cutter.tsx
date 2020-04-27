@@ -4,7 +4,7 @@ import {Sample, GIF, getFrameLength} from '../../../../tools/gif';
 import {Handle, HandlePosition} from './Handle';
 
 const Container = styled.div`
-  width: ${(props) => props.theme.addModal.windowSize - props.theme.addModal.spacing * 3}px;
+  width: 100%;
 `;
 
 const Timeline = styled.div`
