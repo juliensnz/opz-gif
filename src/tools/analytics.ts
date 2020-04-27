@@ -12,9 +12,11 @@ enum UserEvent {
   AppLaunch = 'app_launch_event',
   ErrorOccured = 'error_occured_event',
   StartAdding = 'start_adding_event',
+  StartEditing = 'start_editing_event',
   GifSelected = 'gif_selected_event',
   CancelAdd = 'cancel_add_event',
   LoopAdded = 'loop_added_event',
+  LoopEdited = 'loop_edited_event',
   LoopRemoved = 'loop_removed_event',
   Download = 'download_event',
   OpenWtf = 'open_wtf_event',
@@ -47,7 +49,10 @@ const sendError = (type: string, error: Error) => {
 };
 
 const sendEvent = async (type: string, event: any = {}) => {
-  if ('development' === process.env.NODE_ENV) return;
+  if ('development' === process.env.NODE_ENV) {
+    console.log(type, event);
+    return;
+  }
 
   try {
     await fetch(AMPLITUDE_URL, {

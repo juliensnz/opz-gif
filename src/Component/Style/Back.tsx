@@ -27,6 +27,7 @@ const Back = styled.div<{vertical: boolean; leading?: boolean}>`
   text-align: center;
   line-height: ${(props) => props.theme.addModal.spacing}px;
   font-size: 20px;
+  color: white;
 
   &:hover {
     cursor: pointer;

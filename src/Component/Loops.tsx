@@ -2,6 +2,7 @@ import React from 'react';
 import {Loop} from '../model/loop';
 import styled from 'styled-components';
 import {Player} from './Player';
+import {GIF} from '../tools/gif';
 
 const Container = styled.div`
   flex: 1;
@@ -65,6 +66,7 @@ const Actions = styled.div`
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
   display: flex;
+  color: white;
 
   &:hover {
     cursor: pointer;
@@ -72,27 +74,44 @@ const Actions = styled.div`
   }
 `;
 
-const Action = styled.div`
+const DeleteAction = styled.div`
   flex: 1;
   justify-content: center;
   align-items: center;
   display: flex;
   height: 100%;
+  background: ${(props) => props.theme.color.red};
+`;
 
-  &:hover {
-    background: rgba(0, 0, 0, 0.1);
-  }
+const EditAction = styled.div`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  height: 100%;
+  background: ${(props) => props.theme.color.blue};
+`;
+
+const AddAction = styled.div`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  height: 100%;
+  background: ${(props) => props.theme.color.green};
 `;
 
 const Loops = ({
   loops,
   onOpenAddLoop,
   onRemoveLoop,
+  onEditLoop,
   onOpenInfoLoop,
   onOpenLikeLoop,
 }: {
   loops: Loop[];
   onOpenAddLoop: (sprite: number) => void;
+  onEditLoop: (sprite: number, gif: GIF) => void;
   onRemoveLoop: (sprite: number) => void;
   onOpenInfoLoop: () => void;
   onOpenLikeLoop: () => void;
@@ -119,11 +138,12 @@ const Loops = ({
               <Actions>
                 {undefined === loop ? (
                   <>
-                    <Action onClick={() => onOpenAddLoop(index)}>Add</Action>
+                    <AddAction onClick={() => onOpenAddLoop(index)}>Add</AddAction>
                   </>
                 ) : (
                   <>
-                    <Action onClick={() => onRemoveLoop(index)}>Delete</Action>
+                    <EditAction onClick={() => onEditLoop(index, loop.gif)}>Edit</EditAction>
+                    <DeleteAction onClick={() => onRemoveLoop(index)}>Delete</DeleteAction>
                   </>
                 )}
               </Actions>

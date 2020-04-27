@@ -31,8 +31,9 @@ You can use the project going to https://juliensnz.github.io/opz-gif/
 - triming/Sampling gifs [DONE v0.2.0]
 - add giphy support [DONE v0.3.0]
 - handle weird gifs size [DONE v0.3.0]
-- add loop feature
 - edit mode
+- manage transparent gif
+- add loop feature
 - local storage
 - remove all
 - generate from video

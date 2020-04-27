@@ -2,7 +2,7 @@
   "homepage": "https://juliensnz.github.io/opz-gif",
   "name": "opz-giffer",
   "version": "0.3.3",
-  "private": true,
+  "private": false,
   "dependencies": {
     "@giphy/js-fetch-api": "^1.5.8",
     "@giphy/react-components": "^1.0.4",

@@ -17,6 +17,7 @@ const theme = {
     yellow: 'rgb(233, 177, 61)',
     red: 'rgb(193, 51, 56)',
     blue: 'rgb(39, 94, 132)',
+    green: 'rgb(43, 102, 60)',
     white: 'rgb(208, 208, 208)',
     grey: 'rgb(128, 128, 128)',
     lightGrey: 'rgb(179, 179, 179)',
