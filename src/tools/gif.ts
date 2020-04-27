@@ -76,10 +76,9 @@ const getDataUrl = async (url: string): Promise<string> => {
           )}" does not allow to download gifs from external tools.
           It's not ideal but you can download the gif yourself and import it using the file section below 😉`
         );
-      } else {
+      } else if (0 === url.indexOf('file://')) {
         reject(
-          `Cannot fetch url "${url}". It's likely to be related a right limitation coming from
-          the image provider. Try to download it yourself and import it using the file section below 😉`
+          `It's not possible to import files from local filesystem as an URL, please import it using the file section below 😉`
         );
       }
     };
@@ -105,7 +104,7 @@ const getGif = async (urlData: string): Promise<GIF> => {
 
   const gif = (await getSuperGif(image)).get_frames();
 
-  return gif.map((frame: Frame) => (frame.delay === null ? {...frame, delay: 0} : frame));
+  return gif.map((frame: Frame) => (frame.delay === null || frame.delay === 0 ? {...frame, delay: 1} : frame));
 };
 
 export {getGif, getImage, getBase64, getDataUrl, getGifLength, getFrameLength};
