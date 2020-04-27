@@ -9,6 +9,7 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 10px 0;
 `;
 const Grid = styled.div`
   display: grid;

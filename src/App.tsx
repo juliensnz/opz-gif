@@ -31,12 +31,19 @@ const Header = styled.div`
   font-size: 30px;
   font-weight: 100;
   width: 100%;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 `;
 const Footer = styled.div`
   height: 60px;
   display: flex;
   color: white;
   background: rgb(19, 19, 19);
+  flex-shrink: 0;
+  position: sticky;
+  bottom: 0;
 `;
 
 const AddButton = styled.div`
