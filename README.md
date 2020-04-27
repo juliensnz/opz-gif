@@ -33,6 +33,7 @@ You can use the project going to https://juliensnz.github.io/opz-gif/
 - handle weird gifs size [DONE v0.3.0]
 - edit mode [DONE v0.4.0]
 - manage transparent gif [DONE v0.4.0]
+- add multiple gifs at once
 - add loop feature
 - local storage
 - remove all
