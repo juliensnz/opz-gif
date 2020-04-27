@@ -56,7 +56,7 @@ const Adder = ({
     if (isLoop(loop) && isConfirmed) {
       onLoopAdd(loop);
     }
-  }, [loop, onLoopAdd]);
+  }, [loop, onLoopAdd, isConfirmed]);
 
   const dismiss = useCallback(() => {
     if (null !== loop.configuration) {

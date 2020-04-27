@@ -11,7 +11,7 @@ import {Wtf} from './Component/Wtf';
 import {Like} from './Component/Like';
 import {useBeforeLeave} from './hooks/leave';
 import {LoadingContext} from './context/loading';
-import {getGifLength, GIF} from './tools/gif';
+import {getGifLength} from './tools/gif';
 import {useLoopState} from './hooks/loop';
 
 const Container = styled.div`

@@ -6,7 +6,6 @@ import {Back} from '../../Style/Back';
 import {Cutter} from './LoopConfigurator/Cutter';
 import {SampleModeSelector} from './LoopConfigurator/SampleModeSelector';
 import {sendEvent, UserEvent} from '../../../tools/analytics';
-import {EmptyLoop, Loop} from '../../../model/loop';
 
 const Container = styled.div<{fullSize: boolean}>`
   display: flex;
@@ -89,12 +88,21 @@ const LoopConfigurator = ({
 
     if (MIN_GIF_SIZE >= gif.length) {
       setConfiguration({start: 0, end: getGifLength(gif), mode: Sample.Sample});
-      setSize(Size.Short);
     } else if (2000 >= getGifLength(gif)) {
       setConfiguration({start: 0, end: getGifLength(gif), mode: Sample.Sample});
-      setSize(Size.Medium);
     } else {
       setConfiguration({start: 0, end: 2000, mode: Sample.Trim});
+    }
+  }, [gif, initialConfiguration]);
+
+  useEffect(() => {
+    if (0 === gif.length) return;
+
+    if (MIN_GIF_SIZE >= gif.length) {
+      setSize(Size.Short);
+    } else if (2000 >= getGifLength(gif)) {
+      setSize(Size.Medium);
+    } else {
       setSize(Size.Long);
     }
   }, [gif]);
@@ -118,7 +126,7 @@ const LoopConfigurator = ({
       (null !== initialConfiguration && initialConfiguration !== configuration)
     )
       sendEvent(UserEvent.ConfigurationChange, configuration);
-  }, [configuration, gif]);
+  }, [configuration, gif, initialConfiguration]);
 
   return (
     <Container fullSize={isEdit}>
