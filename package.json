@@ -2,6 +2,7 @@
   "homepage": "https://juliensnz.github.io/opz-gif",
   "name": "opz-giffer",
   "version": "0.4.1",
+  "license": "OSL-3.0",
   "private": false,
   "dependencies": {
     "@giphy/js-fetch-api": "^1.5.8",
@@ -16,10 +17,10 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start": "REACT_APP_VERSION=$(node -pe 'require(\"./package.json\").version') react-scripts start",
-    "build": "REACT_APP_VERSION=$(node -pe 'require(\"./package.json\").version') react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "REACT_APP_VERSION=$(node -pe 'require(\"./package.json\").version') react-app-rewired start",
+    "build": "REACT_APP_VERSION=$(node -pe 'require(\"./package.json\").version') react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-app-rewired eject",
     "package": "npm run build && mv build opz-gif && tar -zcvf opz-gif.tar.gz opz-gif && rm -rf opz-gif"
   },
   "eslintConfig": {
@@ -46,6 +47,8 @@
     "@types/styled-components": "^5.0.1",
     "file-saver": "^2.0.2",
     "gh-pages": "^2.2.0",
-    "styled-components": "^5.0.1"
+    "react-app-rewired": "^2.1.5",
+    "styled-components": "^5.0.1",
+    "webpack-filter-warnings-plugin": "^1.2.1"
   }
 }
