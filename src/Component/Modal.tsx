@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 const Container = styled.div<{isVisible: boolean}>`
+  z-index: 2;
   position: fixed;
   top: 0;
   left: 0;
