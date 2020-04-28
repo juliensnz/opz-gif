@@ -34,6 +34,7 @@ You can use the project going to https://juliensnz.github.io/opz-gif/
 - edit mode [DONE v0.4.0]
 - manage transparent gif [DONE v0.4.0]
 - manage 0 length delay [DONE v0.4.1]
+- Add end to end tests
 - add multiple gifs at once
 - add loop feature
 - local storage
