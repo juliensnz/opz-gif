@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useRef, useState, useEffect} from 'react';
+import React, {ChangeEvent, useRef, useState} from 'react';
 import styled from 'styled-components';
 import {getGif, getBase64, GIF, getImage, getDataUrl} from '../tools/gif';
 import {FRAME_WIDTH, FRAME_HEIGHT} from '../tools/canvas';
