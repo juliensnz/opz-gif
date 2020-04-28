@@ -1,0 +1,57 @@
+name: Create release
+on:
+  push:
+    branches:
+      - master
+jobs:
+  tag:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+      - name: Bump version and push tag
+        id: bump_version
+        uses: anothrNick/github-tag-action@1.17.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          WITH_V: true
+          DEFAULT_BUMP: patch
+          DRY_RUN: true
+      - run: echo "::set-output name=release_body::$(git log ${{steps.bump_version.outputs.tag}}..HEAD --oneline)"
+        id: get_release_body
+      - run: TAG_VERSION=${{steps.bump_version.outputs.new_tag}} && npm --allow-same-version --no-git-tag-version version ${TAG_VERSION:1}
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+      - name: Update resources
+        uses: alexesprit/action-update-file@master
+        with:
+          file-path: ./package.json
+          commit-msg: Update package.json for ${{steps.bump_version.outputs.new_tag}} release
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{steps.bump_version.outputs.new_tag}}
+          release_name: Release ${{steps.bump_version.outputs.new_tag}}
+          body: ${{steps.get_release_body.outputs.release_body}}
+          draft: false
+          prerelease: false
+      - name: Use Node.js 13
+        uses: actions/setup-node@v1
+        with:
+          node-version: 13.13
+      - name: Install Packages
+        run: npm install
+      - name: Build page
+        run: npm run build
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          publish_dir: ./build
+      - run: "curl -d \"version=${{steps.bump_version.outputs.new_tag}}&title=Release ${{steps.bump_version.outputs.new_tag}}&release_start=$(node ./.github/workflows/date.js)\" -H \"Authorization: Basic ${{ secrets.AMPLITUDE_API_KEY }}\" -X POST https://amplitude.com/api/2/release"
