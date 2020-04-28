@@ -11,5 +11,9 @@
 // };
 
 module.exports = function(source) {
-  return `module.exports = {loadMoatTag: () => {}}`;
+  if (-1 !== source.indexOf('https://giphyscripts.s3.amazonaws.com/moat/moatad.js')) {
+    return `module.exports = {loadMoatTag: () => {}}`;
+  }
+
+  return source;
 }

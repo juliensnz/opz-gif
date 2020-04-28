@@ -26,7 +26,7 @@ module.exports = (config, env) => {
   }
 
   config.module.rules.push({
-    test: /moat-loader\/index\.js$/,
+    test: /\.js$/,
     use: [
       {
         loader: path.resolve('./webpack/loader.js'),
