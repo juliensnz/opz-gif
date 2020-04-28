@@ -26,7 +26,7 @@ const Like = ({dismissModal}: {dismissModal: () => void}) => {
   useShortcut(Key.Escape, dismissModal);
 
   return (
-    <Container isVisible={isVisible}>
+    <Container isVisible={isVisible} data-testid="like_modal">
       <Mask onClick={dismissModal} />
       <Modal>
         <Header>

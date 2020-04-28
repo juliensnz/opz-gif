@@ -10,9 +10,14 @@ context('Example Cypress TodoMVC test', () => {
     cy.visit('http://localhost:3000');
   });
 
-  it('adds 2 todos', function () {
-    cy.get('.new-todo').type('learn testing{enter}').type('be cool{enter}');
-    cy.get('.todo-list li').should('have.length', 2);
+  it('displays 14 loops', function () {
+    cy.get('[data-testid^="loop_container"]').should('have.length', 14);
+  });
+
+  it('does not display any modals', function () {
+    cy.wait(500).get('[data-testid^="adder_modal"]').should('not.be.visible');
+    cy.wait(500).get('[data-testid^="wtf_modal"]').should('not.be.visible');
+    cy.wait(500).get('[data-testid^="like_modal"]').should('not.be.visible');
   });
 
   // more examples

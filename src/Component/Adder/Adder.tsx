@@ -73,7 +73,7 @@ const Adder = ({
   useShortcut(Key.Escape, dismiss);
 
   return (
-    <Container isVisible={isVisible}>
+    <Container isVisible={isVisible} data-testid="adder_modal">
       <Mask onClick={dismiss} />
       <Modal>
         <Header>
