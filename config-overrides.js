@@ -1,10 +1,6 @@
 const FilterWarningsPlugin = require('webpack-filter-warnings-plugin');
 const path = require('path');
 
-const moatLoader = (source) => {
-  console.log(source)
-}
-
 module.exports = (config, env) => {
   if (!config.plugins) {
       config.plugins = [];
