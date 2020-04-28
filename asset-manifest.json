@@ -5,17 +5,17 @@
     "main.js.map": "/opz-gif/static/js/main.c5d3396c.chunk.js.map",
     "runtime-main.js": "/opz-gif/static/js/runtime-main.634d7a3d.js",
     "runtime-main.js.map": "/opz-gif/static/js/runtime-main.634d7a3d.js.map",
-    "static/js/2.5d829132.chunk.js": "/opz-gif/static/js/2.5d829132.chunk.js",
-    "static/js/2.5d829132.chunk.js.map": "/opz-gif/static/js/2.5d829132.chunk.js.map",
+    "static/js/2.9921cc3c.chunk.js": "/opz-gif/static/js/2.9921cc3c.chunk.js",
+    "static/js/2.9921cc3c.chunk.js.map": "/opz-gif/static/js/2.9921cc3c.chunk.js.map",
     "index.html": "/opz-gif/index.html",
-    "precache-manifest.922d61d8845a85945d89582e8060fa0c.js": "/opz-gif/precache-manifest.922d61d8845a85945d89582e8060fa0c.js",
+    "precache-manifest.349246003e65dc89c24a1857942a893f.js": "/opz-gif/precache-manifest.349246003e65dc89c24a1857942a893f.js",
     "service-worker.js": "/opz-gif/service-worker.js",
     "static/css/main.5ecd60fb.chunk.css.map": "/opz-gif/static/css/main.5ecd60fb.chunk.css.map",
-    "static/js/2.5d829132.chunk.js.LICENSE.txt": "/opz-gif/static/js/2.5d829132.chunk.js.LICENSE.txt"
+    "static/js/2.9921cc3c.chunk.js.LICENSE.txt": "/opz-gif/static/js/2.9921cc3c.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.634d7a3d.js",
-    "static/js/2.5d829132.chunk.js",
+    "static/js/2.9921cc3c.chunk.js",
     "static/css/main.5ecd60fb.chunk.css",
     "static/js/main.c5d3396c.chunk.js"
   ]
