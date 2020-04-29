@@ -129,6 +129,7 @@ const App = () => {
         />
         <Footer>
           <AddButton
+            data-testid="main_add_button"
             onClick={() => {
               sendEvent(UserEvent.StartAdding, {from: 'button'});
               openAddModal();
@@ -139,6 +140,7 @@ const App = () => {
           <Spacer />
           {0 !== loops.length && (
             <DownloadButton
+              data-testid="main_download_button"
               onClick={async () => {
                 sendEvent(UserEvent.Download, {loop_count: loops.length});
                 try {

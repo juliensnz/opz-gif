@@ -47,10 +47,18 @@ const Mode = styled.div<{selected: boolean}>`
 const SampleModeSelector = ({mode, onChange}: {mode: Sample; onChange: (newMode: Sample) => void}) => {
   return (
     <Container>
-      <Mode selected={mode === Sample.Trim} onClick={() => onChange(Sample.Trim)}>
+      <Mode
+        data-testid="loop_configurator_sample_trim"
+        selected={mode === Sample.Trim}
+        onClick={() => onChange(Sample.Trim)}
+      >
         Trim
       </Mode>
-      <Mode selected={mode === Sample.Sample} onClick={() => onChange(Sample.Sample)}>
+      <Mode
+        data-testid="loop_configurator_sample_sample"
+        selected={mode === Sample.Sample}
+        onClick={() => onChange(Sample.Sample)}
+      >
         Sample
       </Mode>
     </Container>

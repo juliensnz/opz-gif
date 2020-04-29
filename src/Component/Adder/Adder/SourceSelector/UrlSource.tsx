@@ -128,9 +128,12 @@ const UrlSource = ({
 
   return (
     <Container selected={Source.Url === selected} previous={previous}>
-      <Button onClick={() => Source.Url !== selected && onSelected()}>Url</Button>
+      <Button data-testid="url_source_button" onClick={() => Source.Url !== selected && onSelected()}>
+        Url
+      </Button>
       <Form visible={Source.Url === selected}>
         <Input
+          data-testid="url_source_input"
           ref={urlRef}
           placeholder="Your GIF url"
           type="text"
@@ -144,7 +147,9 @@ const UrlSource = ({
           }}
           value={url}
         />
-        <Submit onClick={submit}>Confirm</Submit>
+        <Submit data-testid="url_source_confirm" onClick={submit}>
+          Confirm
+        </Submit>
         {null !== error && <ErrorDisplay>{error}</ErrorDisplay>}
       </Form>
       {previous && (

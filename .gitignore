@@ -24,3 +24,7 @@ yarn-error.log*
 .env
 .env.production
 .env.development
+
+/cypress/downloads
+/cypress/videos
+/public/skeleton.gif
