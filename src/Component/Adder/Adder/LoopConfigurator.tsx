@@ -151,6 +151,7 @@ const LoopConfigurator = ({
             )}
           </Configurator>
           <Submit
+            data-testid="loop_configurator_confirm"
             onClick={() => {
               onLoopConfirmation(configuration);
             }}

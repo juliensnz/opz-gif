@@ -6,7 +6,7 @@ import {useShortcut} from '../hooks/shortcut';
 import {Key} from '../tools/key';
 
 const Content = styled.div`
-  padding: 30px 50px;
+  padding: 15px 50px 30px 50px;
   line-height: 23px;
 `;
 
@@ -25,7 +25,7 @@ const Wtf = ({dismissModal}: {dismissModal: () => void}) => {
   useShortcut(Key.Escape, dismissModal);
 
   return (
-    <Container isVisible={isVisible}>
+    <Container isVisible={isVisible} data-testid="wtf_modal">
       <Mask onClick={dismissModal} />
       <Modal>
         <Header>

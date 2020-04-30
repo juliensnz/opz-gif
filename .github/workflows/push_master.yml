@@ -52,6 +52,7 @@ jobs:
         env:
           REACT_APP_ANALYTICS_API_KEY: ${{ secrets.REACT_APP_ANALYTICS_API_KEY }}
           REACT_APP_GIPHY_API_KEY: ${{ secrets.REACT_APP_GIPHY_API_KEY }}
+          SKIP_PREFLIGHT_CHECK: true
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:

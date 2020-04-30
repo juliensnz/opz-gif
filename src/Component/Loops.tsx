@@ -124,7 +124,7 @@ const Loops = ({
     <Container>
       <Grid>
         {nonEmptyLoops.map((loop: Loop | undefined, index: number) => (
-          <Item key={index}>
+          <Item key={index} data-testid={`loop_container_${index}`}>
             {undefined === loop ? (
               index < 14 ? (
                 index + 1

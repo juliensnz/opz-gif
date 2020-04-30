@@ -102,6 +102,8 @@ const FileSource = ({
     async (event: ChangeEvent<HTMLInputElement>) => {
       if (true === loading) return;
       if (null === event.target.files) return;
+      if (undefined === event.target.files[0]) return;
+
       if ('image/gif' !== event.target.files[0].type) {
         const error = new Error(
           `File type "${event.target.files[0].type}" are not supported yet. Only .gif files are supported for now.`
@@ -133,7 +135,9 @@ const FileSource = ({
 
   return (
     <Container selected={Source.File === selected} previous={previous}>
-      <Button onClick={() => Source.File !== selected && onSelected()}>File</Button>
+      <Button data-testid="file_source_button" onClick={() => Source.File !== selected && onSelected()}>
+        File
+      </Button>
       {null !== selected && Source.File !== selected && (
         <Back vertical={false} onClick={() => onSelected()}>
           Back
@@ -145,7 +149,7 @@ const FileSource = ({
           {null !== error && <ErrorDisplay>{error}</ErrorDisplay>}
         </Explanation>
 
-        <Input type="file" onChange={submit} />
+        <Input data-testid="file_source_input" type="file" onChange={submit} />
       </DropZone>
       {null !== selected && Source.File !== selected && (
         <Back vertical={false} leading={false} onClick={() => onSelected()}>
