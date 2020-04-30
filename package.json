@@ -5,14 +5,14 @@
   "license": "OSL-3.0",
   "private": false,
   "dependencies": {
-    "@giphy/js-fetch-api": "^1.5.8",
-    "@giphy/react-components": "^1.0.4",
-    "jszip": "^3.3.0",
+    "@giphy/js-fetch-api": "^1.5.9",
+    "@giphy/react-components": "^1.0.5",
+    "jszip": "^3.4.0",
     "libgif": "^0.0.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
-    "typescript": "~3.7.2"
+    "typescript": "^3.8.3"
   },
   "scripts": {
     "predeploy": "npm run build",
@@ -42,16 +42,16 @@
     "@bahmutov/add-typescript-to-cypress": "^2.1.2",
     "@types/file-saver": "^2.0.1",
     "@types/jszip": "^3.1.7",
-    "@types/node": "^12.0.0",
-    "@types/react": "^16.9.0",
-    "@types/react-dom": "^16.9.0",
-    "@types/styled-components": "^5.0.1",
-    "cypress": "^4.4.1",
+    "@types/node": "^13.13.4",
+    "@types/react": "^16.9.34",
+    "@types/react-dom": "^16.9.7",
+    "@types/styled-components": "^5.1.0",
+    "cypress": "^4.5.0",
     "cypress-file-upload": "3.5.3",
     "file-saver": "^2.0.2",
     "gh-pages": "^2.2.0",
     "react-app-rewired": "^2.1.5",
-    "styled-components": "^5.0.1",
+    "styled-components": "^5.1.0",
     "webpack": "^4.43.0",
     "webpack-filter-warnings-plugin": "^1.2.1"
   }
