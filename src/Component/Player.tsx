@@ -1,7 +1,7 @@
 import React, {useRef, useEffect} from 'react';
 import styled from 'styled-components';
 import {GIF, Configuration} from '../tools/gif';
-import {FRAME_WIDTH, FRAME_HEIGHT, animate} from '../tools/canvas';
+import {FRAME_WIDTH, FRAME_HEIGHT, animate, getImages} from '../tools/canvas';
 
 const Canvas = styled.canvas<{cssWidth: number}>`
   width: ${(props) => props.cssWidth}px;
@@ -13,7 +13,7 @@ const Player = ({gif, width, configuration}: {gif: GIF; width: number; configura
 
   useEffect(() => {
     if (null !== canvasRef && null !== canvasRef.current) {
-      const timer = animate(canvasRef.current as any, gif, configuration);
+      const timer = animate(canvasRef.current as any, getImages(gif, configuration));
 
       return () => {
         clearInterval(timer);

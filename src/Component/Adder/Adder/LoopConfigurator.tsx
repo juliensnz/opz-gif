@@ -130,7 +130,7 @@ const LoopConfigurator = ({
 
   return (
     <Container fullSize={isEdit}>
-      {gif.length !== 0 && (
+      {gif.length !== 0 && configuration.start !== configuration.end && (
         <>
           <Configurator>
             <Player
