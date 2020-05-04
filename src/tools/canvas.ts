@@ -55,14 +55,11 @@ const filterGif = (gif: GIF, start: number, end: number): GIF => {
   });
 };
 
-const animate = (canvas: HTMLCanvasElement, gif: GIF, configuration: Configuration): number => {
+const animate = (canvas: HTMLCanvasElement, frames: ImageData[]): number => {
   let cpt = 0;
-  const trimedGif = filterGif(gif, configuration.start, configuration.end);
-  const frames = getAnimate(configuration)(trimedGif);
 
   return setInterval(() => {
-    const imageData = getCroppedImageData(trimedGif[frames[cpt % 30]].data);
-    drawImage(canvas, imageData);
+    drawImage(canvas, frames[cpt % 30]);
     cpt++;
   }, ANIMATION_LENGTH / 30);
 };

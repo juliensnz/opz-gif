@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import {SourceSelector} from './Adder/SourceSelector';
 import {LoopConfigurator} from './Adder/LoopConfigurator';
 import {SpriteSelector} from './Adder/SpriteSelector';
-import {Loop, EmptyLoop, isLoop} from '../../model/loop';
+import {Loop, EmptyLoop, isLoop, updatePreview, Preview} from '../../model/loop';
 import {useBooleanState} from '../../hooks/boolean';
 import {sendEvent, UserEvent} from '../../tools/analytics';
 import {Container, Modal, Header, Dismiss, Title, Mask} from '../Modal';
@@ -26,7 +26,7 @@ const Scroller = styled.div<{level: number}>`
 
 const getLevel = (loop: Loop | EmptyLoop, isEdit: boolean): number => {
   if (isEdit) return 0;
-  if (null !== loop.configuration) return 2;
+  if (null !== loop.configuration && null === loop.sprite) return 2;
   if (0 !== loop.gif.length) return 1;
 
   return 0;
@@ -45,7 +45,7 @@ const Adder = ({
   const [isConfirmed, setComfirmed] = useState(!isEdit);
   const [loop, setLoop] = useState<Loop | EmptyLoop>(initialLoop);
   const [isVisible, show] = useBooleanState(false);
-  const [loading] = useContext(LoadingContext);
+  const [loading, setLoading] = useContext(LoadingContext);
 
   useEffect(() => {
     setImmediate(() => show());
@@ -54,9 +54,9 @@ const Adder = ({
 
   useEffect(() => {
     if (isLoop(loop) && isConfirmed) {
-      onLoopAdd(loop);
+      onLoopAdd(0 === loop.preview.length ? updatePreview(loop) : loop);
     }
-  }, [loop, onLoopAdd, isConfirmed]);
+  }, [loop, onLoopAdd, isConfirmed, setLoading]);
 
   const dismiss = useCallback(() => {
     if (null !== loop.configuration) {
@@ -86,7 +86,11 @@ const Adder = ({
             <SourceSelector
               previous={0 !== loop.gif.length}
               onGifSelected={(gif: GIF) => {
-                setLoop({...loop, gif});
+                if (0 === gif.length) {
+                  setLoop(initialLoop);
+                } else {
+                  setLoop({...loop, gif});
+                }
               }}
             />
           )}
@@ -94,8 +98,8 @@ const Adder = ({
             isEdit={isEdit}
             gif={loop.gif}
             initialConfiguration={loop.configuration}
-            onLoopConfirmation={(configuration: Configuration | null) => {
-              setLoop({...loop, configuration});
+            onLoopConfirmation={(configuration: Configuration | null, preview: Preview) => {
+              setLoop({...loop, configuration, preview});
               setComfirmed(true);
             }}
           />
