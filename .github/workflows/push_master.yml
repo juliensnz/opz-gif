@@ -85,7 +85,7 @@ jobs:
           source_branch: "master"
           destination_repo: "juliensnz/loopak"
           destination_branch: "master"
-          ssh_private_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          ssh_private_key: ${{ secrets.LOOPAK_GITHUB_KEY }}
 
       - name: repo-sync
         uses: wei/git-sync@v2
@@ -94,4 +94,4 @@ jobs:
           source_branch: "refs/tags/*"
           destination_repo: "juliensnz/loopak"
           destination_branch: "refs/tags/*"
-          ssh_private_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          ssh_private_key: ${{ secrets.LOOPAK_GITHUB_KEY }}
