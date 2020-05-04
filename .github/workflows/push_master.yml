@@ -7,7 +7,7 @@ jobs:
   # tag:
   #   name: Create Release
   #   runs-on: ubuntu-latest
-  #   if: github.repository === 'juliensnz/opz-gif'
+  #   if: github.repository == 'juliensnz/opz-gif'
   #   steps:
   #     - uses: actions/checkout@v2
   #       with:
@@ -48,7 +48,7 @@ jobs:
   #   name: Deploy to github pages
   #   needs: tag
   #   runs-on: ubuntu-latest
-  #   if: github.repository === 'juliensnz/opz-gif'
+  #   if: github.repository == 'juliensnz/opz-gif'
   #   steps:
   #     - uses: actions/checkout@v2
   #       with:
@@ -72,10 +72,10 @@ jobs:
   #         publish_dir: ./build
 
   sync:
+    if: github.repository == 'juliensnz/opz-gif'
     name: Sync to loopak
     # needs: tag
     runs-on: ubuntu-latest
-    if: github.repository === 'juliensnz/opz-gif'
     steps:
       - uses: actions/checkout@v2
       - name: repo-sync
