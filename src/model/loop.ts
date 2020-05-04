@@ -5,14 +5,16 @@ export type Loop = {
   gif: GIF;
   configuration: Configuration;
   sprite: number;
-  preview: ImageData[];
+  preview: Preview;
 };
 export type EmptyLoop = {
   gif: GIF;
   configuration: Configuration | null;
   sprite: number | null;
-  preview: ImageData[];
+  preview: Preview;
 };
+
+export type Preview = ImageData[];
 
 export const createEmptyLoop = (): EmptyLoop => ({
   gif: [],

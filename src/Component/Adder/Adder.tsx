@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import {SourceSelector} from './Adder/SourceSelector';
 import {LoopConfigurator} from './Adder/LoopConfigurator';
 import {SpriteSelector} from './Adder/SpriteSelector';
-import {Loop, EmptyLoop, isLoop} from '../../model/loop';
+import {Loop, EmptyLoop, isLoop, updatePreview} from '../../model/loop';
 import {useBooleanState} from '../../hooks/boolean';
 import {sendEvent, UserEvent} from '../../tools/analytics';
 import {Container, Modal, Header, Dismiss, Title, Mask} from '../Modal';
@@ -54,7 +54,7 @@ const Adder = ({
 
   useEffect(() => {
     if (isLoop(loop) && isConfirmed) {
-      onLoopAdd(loop);
+      onLoopAdd(updatePreview(loop));
     }
   }, [loop, onLoopAdd, isConfirmed]);
 

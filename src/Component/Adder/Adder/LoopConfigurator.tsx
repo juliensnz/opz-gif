@@ -6,6 +6,8 @@ import {Back} from '../../Style/Back';
 import {Cutter} from './LoopConfigurator/Cutter';
 import {SampleModeSelector} from './LoopConfigurator/SampleModeSelector';
 import {sendEvent, UserEvent} from '../../../tools/analytics';
+import {getImages} from '../../../tools/canvas';
+import {Preview} from '../../../model/loop';
 
 const Container = styled.div<{fullSize: boolean}>`
   display: flex;
@@ -46,6 +48,73 @@ enum Size {
   Long = 'long',
 }
 
+const useGeneratePreview = (gif: GIF, configuration: Configuration): Preview | null => {
+  const [preview, setPreview] = useState<Preview | null>(null);
+  useEffect(() => {
+    if (gif.length !== 0 && configuration.start !== configuration.end) {
+      setPreview(getImages(gif, configuration));
+    }
+  }, [configuration, gif]);
+
+  return preview;
+};
+
+const useConfiguration = (
+  gif: GIF,
+  initialConfiguration: Configuration | null
+): [Configuration, (configuration: Configuration) => void] => {
+  const [configuration, setConfiguration] = useState(
+    initialConfiguration === null ? {start: 0, end: getGifLength(gif), mode: Sample.Sample} : initialConfiguration
+  );
+
+  useEffect(() => {
+    if (null !== initialConfiguration) return;
+    if (0 === gif.length) return;
+
+    if (MIN_GIF_SIZE >= gif.length) {
+      setConfiguration({start: 0, end: getGifLength(gif), mode: Sample.Sample});
+    } else if (2000 >= getGifLength(gif)) {
+      setConfiguration({start: 0, end: getGifLength(gif), mode: Sample.Sample});
+    } else {
+      setConfiguration({start: 0, end: 2000, mode: Sample.Trim});
+    }
+  }, [gif, initialConfiguration]);
+
+  useEffect(() => {
+    const isDefaultSample =
+      0 === configuration.start && getGifLength(gif) === configuration.end && configuration.mode === Sample.Sample;
+    const isDefaultTrim = 0 === configuration.start && 2000 === configuration.end && configuration.mode === Sample.Trim;
+    const isEmptyConfiguration =
+      0 === configuration.start && 0 === configuration.end && configuration.mode === Sample.Sample;
+
+    if (
+      (!isDefaultSample && !isDefaultTrim && !isEmptyConfiguration) ||
+      (null !== initialConfiguration && initialConfiguration !== configuration)
+    )
+      sendEvent(UserEvent.ConfigurationChange, configuration);
+  }, [configuration, gif, initialConfiguration]);
+
+  return [configuration, setConfiguration];
+};
+
+const useSize = (gif: GIF): Size => {
+  const [size, setSize] = useState<Size>(Size.Long);
+
+  useEffect(() => {
+    if (0 === gif.length) return;
+
+    if (MIN_GIF_SIZE >= gif.length) {
+      setSize(Size.Short);
+    } else if (2000 >= getGifLength(gif)) {
+      setSize(Size.Medium);
+    } else {
+      setSize(Size.Long);
+    }
+  }, [gif]);
+
+  return size;
+};
+
 const LoopConfigurator = ({
   initialConfiguration,
   gif,
@@ -59,10 +128,9 @@ const LoopConfigurator = ({
 }) => {
   const previous = null !== initialConfiguration;
   const theme = useContext(ThemeContext);
-  const [configuration, setConfiguration] = useState(
-    initialConfiguration === null ? {start: 0, end: getGifLength(gif), mode: Sample.Sample} : initialConfiguration
-  );
-  const [size, setSize] = useState<Size>(Size.Long);
+  const [configuration, setConfiguration] = useConfiguration(gif, initialConfiguration);
+  const preview = useGeneratePreview(gif, configuration);
+  const size = useSize(gif);
 
   const onModeChange = useCallback(
     (newMode: Sample) => {
@@ -82,31 +150,6 @@ const LoopConfigurator = ({
     [configuration]
   );
 
-  useEffect(() => {
-    if (null !== initialConfiguration) return;
-    if (0 === gif.length) return;
-
-    if (MIN_GIF_SIZE >= gif.length) {
-      setConfiguration({start: 0, end: getGifLength(gif), mode: Sample.Sample});
-    } else if (2000 >= getGifLength(gif)) {
-      setConfiguration({start: 0, end: getGifLength(gif), mode: Sample.Sample});
-    } else {
-      setConfiguration({start: 0, end: 2000, mode: Sample.Trim});
-    }
-  }, [gif, initialConfiguration]);
-
-  useEffect(() => {
-    if (0 === gif.length) return;
-
-    if (MIN_GIF_SIZE >= gif.length) {
-      setSize(Size.Short);
-    } else if (2000 >= getGifLength(gif)) {
-      setSize(Size.Medium);
-    } else {
-      setSize(Size.Long);
-    }
-  }, [gif]);
-
   const onCutChange = useCallback(
     (start: number, end: number) => {
       setConfiguration({...configuration, start, end});
@@ -114,30 +157,12 @@ const LoopConfigurator = ({
     [configuration]
   );
 
-  useEffect(() => {
-    const isDefaultSample =
-      0 === configuration.start && getGifLength(gif) === configuration.end && configuration.mode === Sample.Sample;
-    const isDefaultTrim = 0 === configuration.start && 2000 === configuration.end && configuration.mode === Sample.Trim;
-    const isEmptyConfiguration =
-      0 === configuration.start && 0 === configuration.end && configuration.mode === Sample.Sample;
-
-    if (
-      (!isDefaultSample && !isDefaultTrim && !isEmptyConfiguration) ||
-      (null !== initialConfiguration && initialConfiguration !== configuration)
-    )
-      sendEvent(UserEvent.ConfigurationChange, configuration);
-  }, [configuration, gif, initialConfiguration]);
-
   return (
     <Container fullSize={isEdit}>
-      {gif.length !== 0 && configuration.start !== configuration.end && (
+      {gif.length !== 0 && configuration.start !== configuration.end && null !== preview && (
         <>
           <Configurator>
-            <Player
-              gif={gif}
-              configuration={configuration}
-              width={theme.addModal.windowSize - theme.addModal.spacing * (isEdit ? 2 : 3)}
-            />
+            <Player preview={preview} width={theme.addModal.windowSize - theme.addModal.spacing * (isEdit ? 2 : 3)} />
             {Size.Long === size && <SampleModeSelector mode={configuration.mode} onChange={onModeChange} />}
             {Size.Short !== size && (
               <Cutter

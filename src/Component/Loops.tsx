@@ -125,15 +125,7 @@ const Loops = ({
       <Grid>
         {nonEmptyLoops.map((loop: Loop | undefined, index: number) => (
           <Item key={index} data-testid={`loop_container_${index}`}>
-            {undefined === loop ? (
-              index < 14 ? (
-                index + 1
-              ) : (
-                ''
-              )
-            ) : (
-              <Player gif={loop.gif} width={300} configuration={loop.configuration} />
-            )}
+            {undefined === loop ? index < 14 ? index + 1 : '' : <Player preview={loop.preview} width={300} />}
             {index < 14 && (
               <Actions>
                 {undefined === loop ? (
