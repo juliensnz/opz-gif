@@ -4,72 +4,72 @@ on:
     branches:
       - master
 jobs:
-  # tag:
-  #   name: Create Release
-  #   runs-on: ubuntu-latest
-  #   if: github.repository == 'juliensnz/opz-gif'
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: '0'
-  #     - name: Bump version and push tag
-  #       id: bump_version
-  #       uses: anothrNick/github-tag-action@1.17.2
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-  #         WITH_V: true
-  #         DEFAULT_BUMP: patch
-  #         DRY_RUN: true
-  #     - run: echo "::set-output name=release_body::$(git log ${{steps.bump_version.outputs.tag}}..HEAD --oneline)"
-  #       id: get_release_body
-  #     - run: TAG_VERSION=${{steps.bump_version.outputs.new_tag}} && npm --allow-same-version --no-git-tag-version version ${TAG_VERSION:1}
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-  #     - name: Update resources
-  #       uses: alexesprit/action-update-file@master
-  #       with:
-  #         file-path: ./package.json
-  #         commit-msg: Update package.json for ${{steps.bump_version.outputs.new_tag}} release
-  #         github-token: ${{ secrets.GITHUB_TOKEN }}
-  #     - name: Create Release
-  #       id: create_release
-  #       uses: actions/create-release@latest
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       with:
-  #         tag_name: ${{steps.bump_version.outputs.new_tag}}
-  #         release_name: Release ${{steps.bump_version.outputs.new_tag}}
-  #         body: ${{steps.get_release_body.outputs.release_body}}
-  #         draft: false
-  #         prerelease: false
-  #     - run: "curl -d \"version=${{steps.bump_version.outputs.new_tag}}&title=Release ${{steps.bump_version.outputs.new_tag}}&release_start=$(node ./.github/workflows/date.js)\" -H \"Authorization: Basic ${{ secrets.AMPLITUDE_API_KEY }}\" -X POST https://amplitude.com/api/2/release"
+  tag:
+    name: Create Release
+    runs-on: ubuntu-latest
+    if: github.repository == 'juliensnz/opz-gif'
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+      - name: Bump version and push tag
+        id: bump_version
+        uses: anothrNick/github-tag-action@1.17.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          WITH_V: true
+          DEFAULT_BUMP: patch
+          DRY_RUN: true
+      - run: echo "::set-output name=release_body::$(git log ${{steps.bump_version.outputs.tag}}..HEAD --oneline)"
+        id: get_release_body
+      - run: TAG_VERSION=${{steps.bump_version.outputs.new_tag}} && npm --allow-same-version --no-git-tag-version version ${TAG_VERSION:1}
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+      - name: Update resources
+        uses: alexesprit/action-update-file@master
+        with:
+          file-path: ./package.json
+          commit-msg: Update package.json for ${{steps.bump_version.outputs.new_tag}} release
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{steps.bump_version.outputs.new_tag}}
+          release_name: Release ${{steps.bump_version.outputs.new_tag}}
+          body: ${{steps.get_release_body.outputs.release_body}}
+          draft: false
+          prerelease: false
+      - run: "curl -d \"version=${{steps.bump_version.outputs.new_tag}}&title=Release ${{steps.bump_version.outputs.new_tag}}&release_start=$(node ./.github/workflows/date.js)\" -H \"Authorization: Basic ${{ secrets.AMPLITUDE_API_KEY }}\" -X POST https://amplitude.com/api/2/release"
 
-  # deploy:
-  #   name: Deploy to github pages
-  #   needs: tag
-  #   runs-on: ubuntu-latest
-  #   if: github.repository == 'juliensnz/opz-gif'
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: '0'
-  #     - name: Use Node.js 13
-  #       uses: actions/setup-node@v1
-  #       with:
-  #         node-version: 13.13
-  #     - name: Install Packages
-  #       run: npm install
-  #     - name: Build page
-  #       run: npm run build
-  #       env:
-  #         REACT_APP_ANALYTICS_API_KEY: ${{ secrets.REACT_APP_ANALYTICS_API_KEY }}
-  #         REACT_APP_GIPHY_API_KEY: ${{ secrets.REACT_APP_GIPHY_API_KEY }}
-  #         SKIP_PREFLIGHT_CHECK: true
-  #     - name: Deploy to gh-pages
-  #       uses: peaceiris/actions-gh-pages@v3
-  #       with:
-  #         deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-  #         publish_dir: ./build
+  deploy:
+    name: Deploy to github pages
+    needs: tag
+    runs-on: ubuntu-latest
+    if: github.repository == 'juliensnz/opz-gif'
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+      - name: Use Node.js 13
+        uses: actions/setup-node@v1
+        with:
+          node-version: 13.13
+      - name: Install Packages
+        run: npm install
+      - name: Build page
+        run: npm run build
+        env:
+          REACT_APP_ANALYTICS_API_KEY: ${{ secrets.REACT_APP_ANALYTICS_API_KEY }}
+          REACT_APP_GIPHY_API_KEY: ${{ secrets.REACT_APP_GIPHY_API_KEY }}
+          SKIP_PREFLIGHT_CHECK: true
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          publish_dir: ./build
 
   sync:
     if: github.repository == 'juliensnz/opz-gif'
