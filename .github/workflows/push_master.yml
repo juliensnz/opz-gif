@@ -74,7 +74,7 @@ jobs:
   sync:
     if: github.repository == 'juliensnz/opz-gif'
     name: Sync to loopak
-    # needs: tag
+    needs: tag
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
