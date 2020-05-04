@@ -7,6 +7,7 @@ jobs:
   tag:
     name: Create Release
     runs-on: ubuntu-latest
+    if: github.repository === 'juliensnz/opz-gif'
     steps:
       - uses: actions/checkout@v2
         with:
@@ -41,6 +42,17 @@ jobs:
           body: ${{steps.get_release_body.outputs.release_body}}
           draft: false
           prerelease: false
+      - run: "curl -d \"version=${{steps.bump_version.outputs.new_tag}}&title=Release ${{steps.bump_version.outputs.new_tag}}&release_start=$(node ./.github/workflows/date.js)\" -H \"Authorization: Basic ${{ secrets.AMPLITUDE_API_KEY }}\" -X POST https://amplitude.com/api/2/release"
+
+  deploy:
+    name: Deploy to github pages
+    needs: tag
+    runs-on: ubuntu-latest
+    if: github.repository === 'juliensnz/opz-gif'
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
       - name: Use Node.js 13
         uses: actions/setup-node@v1
         with:
@@ -58,4 +70,28 @@ jobs:
         with:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
           publish_dir: ./build
-      - run: "curl -d \"version=${{steps.bump_version.outputs.new_tag}}&title=Release ${{steps.bump_version.outputs.new_tag}}&release_start=$(node ./.github/workflows/date.js)\" -H \"Authorization: Basic ${{ secrets.AMPLITUDE_API_KEY }}\" -X POST https://amplitude.com/api/2/release"
+
+  deploy:
+    name: Sync to loopak
+    needs: tag
+    runs-on: ubuntu-latest
+    if: github.repository === 'juliensnz/opz-gif'
+    steps:
+      - uses: actions/checkout@v2
+      - name: repo-sync
+        uses: wei/git-sync@v2
+        with:
+          source_repo: "juliensnz/opz-gif"
+          source_branch: "master"
+          destination_repo: "juliensnz/loopak"
+          destination_branch: "master"
+          ssh_private_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+
+      - name: repo-sync
+        uses: wei/git-sync@v2
+        with:
+          source_repo: "juliensnz/opz-gif"
+          source_branch: "refs/tags/*"
+          destination_repo: "juliensnz/loopak"
+          destination_branch: "refs/tags/*"
+          ssh_private_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
