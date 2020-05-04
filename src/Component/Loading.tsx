@@ -56,4 +56,4 @@ const Loading = ({isLoading}: {isLoading: boolean}) => {
   );
 };
 
-export {Loading};
+export {Loading, Bar, Progress};

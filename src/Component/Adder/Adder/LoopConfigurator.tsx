@@ -8,6 +8,7 @@ import {SampleModeSelector} from './LoopConfigurator/SampleModeSelector';
 import {sendEvent, UserEvent} from '../../../tools/analytics';
 import {getImages} from '../../../tools/canvas';
 import {Preview} from '../../../model/loop';
+import {Bar, Progress} from '../../Loading';
 
 const Container = styled.div<{fullSize: boolean}>`
   display: flex;
@@ -19,6 +20,14 @@ const Container = styled.div<{fullSize: boolean}>`
   box-sizing: border-box;
   justify-content: space-between;
   position: relative;
+`;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
 `;
 
 const Submit = styled.span`
@@ -48,8 +57,8 @@ enum Size {
   Long = 'long',
 }
 
-const useGeneratePreview = (gif: GIF, configuration: Configuration): Preview | null => {
-  const [preview, setPreview] = useState<Preview | null>(null);
+const useGeneratePreview = (gif: GIF, configuration: Configuration): Preview => {
+  const [preview, setPreview] = useState<Preview>([]);
   useEffect(() => {
     if (gif.length !== 0 && configuration.start !== configuration.end) {
       setPreview(getImages(gif, configuration));
@@ -124,7 +133,7 @@ const LoopConfigurator = ({
   initialConfiguration: Configuration | null;
   gif: GIF;
   isEdit: boolean;
-  onLoopConfirmation: (mode: Configuration | null) => void;
+  onLoopConfirmation: (configuration: Configuration | null, preview: Preview) => void;
 }) => {
   const previous = null !== initialConfiguration;
   const theme = useContext(ThemeContext);
@@ -147,19 +156,26 @@ const LoopConfigurator = ({
         ...newStartEnd,
       });
     },
-    [configuration]
+    [configuration, setConfiguration]
   );
 
   const onCutChange = useCallback(
     (start: number, end: number) => {
       setConfiguration({...configuration, start, end});
     },
-    [configuration]
+    [configuration, setConfiguration]
   );
 
   return (
     <Container fullSize={isEdit}>
-      {gif.length !== 0 && configuration.start !== configuration.end && null !== preview && (
+      {0 === preview.length && (
+        <LoadingContainer>
+          <Bar>
+            <Progress />
+          </Bar>
+        </LoadingContainer>
+      )}
+      {gif.length !== 0 && configuration.start !== configuration.end && 0 !== preview.length && (
         <>
           <Configurator>
             <Player preview={preview} width={theme.addModal.windowSize - theme.addModal.spacing * (isEdit ? 2 : 3)} />
@@ -178,7 +194,7 @@ const LoopConfigurator = ({
           <Submit
             data-testid="loop_configurator_confirm"
             onClick={() => {
-              onLoopConfirmation(configuration);
+              onLoopConfirmation(configuration, preview);
             }}
           >
             Confirm
@@ -186,7 +202,7 @@ const LoopConfigurator = ({
         </>
       )}
       {previous && !isEdit && (
-        <Back vertical={true} onClick={() => onLoopConfirmation(null)}>
+        <Back vertical={true} onClick={() => onLoopConfirmation(null, preview)}>
           Back
         </Back>
       )}
