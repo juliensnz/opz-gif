@@ -7,7 +7,7 @@
   "dependencies": {
     "@giphy/js-fetch-api": "^1.5.9",
     "@giphy/react-components": "^1.0.5",
-    "jszip": "^3.4.0",
+    "jszip": "^3.7.0",
     "libgif": "^0.0.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
